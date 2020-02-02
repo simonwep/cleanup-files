@@ -1,11 +1,20 @@
 use std::path::PathBuf;
 
+mod fs_utils;
 mod params;
 
 fn main() {
     let op = params::parse_args(std::env::args());
     let dir = std::fs::read_dir(&op.source)
         .ok().expect(&format!("Failed to read directory: {:?}", op.source));
+
+    println!("Using the following paths:\n Source: {:?}\n Target: {:?}", op.source, op.target);
+
+    // Create missing directories
+    match fs_utils::create_dir_tree(&op.target) {
+        Ok(_) => (),
+        Err(e) => return println!("Critical error: {}", e)
+    };
 
     for entry in dir {
         let path = entry.unwrap().path();
