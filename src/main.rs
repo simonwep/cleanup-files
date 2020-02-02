@@ -1,67 +1,51 @@
-use std::ffi::OsStr;
 use std::path::PathBuf;
 
 mod params;
 
 fn main() {
     let op = params::parse_args(std::env::args());
-    let dir = std::fs::read_dir(&op.source);
+    let dir = std::fs::read_dir(&op.source)
+        .ok().expect(&format!("Failed to read directory: {:?}", op.source));
 
-    // Check if read_dir was successful
-    if dir.is_err() {
-        println!("Unable to read source directory: {:?}", &op.source);
-        return;
-    }
-
-    for entry in dir.unwrap() {
-        if entry.is_err() {
-            println!("Unable to read file: {}", entry.unwrap().path().to_str().unwrap());
-            continue;
-        }
-
+    for entry in dir {
         let path = entry.unwrap().path();
+
         if path.is_file() {
-            handle_file(&path, &op.target);
+            match handle_file(&path, &op.target) {
+                Ok(_) => println!("Successfully moved {:?}", path),
+                Err(error) => println!("{}", error)
+            }
         }
     }
-}
-
-/**
- * Resolves the destination directory for a specific file-extension.
- */
-fn res_des_dir(ext: &OsStr, destination: &OsStr) -> PathBuf {
-    PathBuf::from(destination).join(ext)
 }
 
 /**
  * Moves a file to the corresponding destination directory
  */
-fn handle_file(path: &PathBuf, destination: &PathBuf) {
-    let extension = path.extension().unwrap();
-    let destination_directory = res_des_dir(extension, destination.as_os_str());
+fn handle_file(path: &PathBuf, destination: &PathBuf) -> Result<(), String> {
+    let extension = match path.extension() {
+        Some(os_str) => os_str,
+        None => return Err(format!("Failed to resolve extension of {:?}", path)),
+    };
 
+    let destination_directory = PathBuf::from(destination).join(extension);
     if !destination_directory.exists() {
-        let result = std::fs::create_dir(&destination_directory);
-
-        if result.is_err() {
-            println!("Failed to create directory \"{}\"", destination_directory.to_str().unwrap());
-            return;
+        match std::fs::create_dir(&destination_directory) {
+            Ok(t) => t,
+            Err(e) => return Err(
+                format!("Failed to create directory: {:?} ({})",
+                        destination_directory,
+                        e.to_string()
+                )
+            )
         }
     }
 
     let target = PathBuf::from(&destination_directory)
         .join(path.file_name().unwrap());
 
-    print!(
-        "Moving {source} to {dest} ... ",
-        source = path.to_str().unwrap(),
-        dest = target.to_str().unwrap()
-    );
-
-    let cpy = std::fs::rename(&path, &target);
-    if cpy.is_ok() {
-        println!(" Success!")
-    } else {
-        println!(" Failed!")
-    }
+    return match std::fs::rename(&path, &target) {
+        Ok(_) => Ok(()),
+        Err(_) => Err(String::from("Failed to move file."))
+    };
 }
