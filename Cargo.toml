@@ -6,7 +6,9 @@ version = "0.0.0"
 authors = ["Simon Reinisch <trash@reinisch.io>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 path-absolutize = "1.1.7"
+
+[[bin]]
+name = "cleanup"
+path = "src/main.rs"
