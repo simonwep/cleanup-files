@@ -13,7 +13,7 @@ pub fn create_dir_tree(path: &PathBuf) -> Result<(), Error> {
         if !sub.exists() {
             match std::fs::create_dir(&sub) {
                 Err(e) => return Err(e),
-                Ok(t) => ()
+                Ok(_) => ()
             };
         }
     }

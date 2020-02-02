@@ -16,14 +16,18 @@ fn main() {
         Err(e) => return println!("Critical error: {}", e)
     };
 
-    for entry in dir {
-        let path = entry.unwrap().path();
-
-        if path.is_file() {
-            match handle_file(&path, &op.target) {
-                Ok(_) => println!("Successfully moved {:?}", path),
-                Err(error) => println!("{}", error)
+    for result in dir {
+        match result {
+            Ok(entry) => {
+                let path = entry.path();
+                if path.is_file() {
+                    match handle_file(&path, &op.target) {
+                        Ok(_) => println!("Successfully moved {:?}", path),
+                        Err(error) => println!("{}", error)
+                    }
+                }
             }
+            Err(error) => println!("{}", error)
         }
     }
 }
@@ -40,7 +44,7 @@ fn handle_file(path: &PathBuf, destination: &PathBuf) -> Result<(), String> {
     let destination_directory = PathBuf::from(destination).join(extension);
     if !destination_directory.exists() {
         match std::fs::create_dir(&destination_directory) {
-            Ok(t) => t,
+            Ok(_) => (),
             Err(e) => return Err(
                 format!("Failed to create directory: {:?} ({})",
                         destination_directory,
