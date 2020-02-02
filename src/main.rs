@@ -4,6 +4,12 @@ mod fs_utils;
 mod params;
 
 fn main() {
+
+    // Resolve current executable to prevent sorting it
+    let current_exe = std::env::current_exe()
+        .ok().expect("Failed to resolve current executable.");
+
+    // Parse arguments and read directory entries
     let op = params::parse_args(std::env::args());
     let dir = std::fs::read_dir(&op.source)
         .ok().expect(&format!("Failed to read directory: {:?}", op.source));
@@ -20,7 +26,9 @@ fn main() {
         match result {
             Ok(entry) => {
                 let path = entry.path();
-                if path.is_file() {
+
+                // Path should point to a file and not be the current executable
+                if path != current_exe && path.is_file() {
                     match handle_file(&path, &op.target) {
                         Ok(_) => println!("Successfully moved {:?}", path),
                         Err(error) => println!("{}", error)
