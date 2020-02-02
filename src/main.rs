@@ -1,16 +1,15 @@
-use std::path::PathBuf;
 use std::ffi::OsStr;
+use std::path::PathBuf;
 
-const SOURCE: &str = "...";
-const DESTINATION: &str = "...";
+mod params;
 
 fn main() {
-    let path = std::env::current_dir();
-    let dir = std::fs::read_dir(SOURCE);
+    let op = params::parse_args(std::env::args());
+    let dir = std::fs::read_dir(&op.source);
 
     // Check if read_dir was successful
     if dir.is_err() {
-        println!("Unable to read source directory: {}", SOURCE);
+        println!("Unable to read source directory: {:?}", &op.source);
         return;
     }
 
@@ -22,7 +21,7 @@ fn main() {
 
         let path = entry.unwrap().path();
         if path.is_file() {
-            handle_file(path);
+            handle_file(&path, &op.target);
         }
     }
 }
@@ -30,22 +29,22 @@ fn main() {
 /**
  * Resolves the destination directory for a specific file-extension.
  */
-fn res_des_dir(ext: &OsStr) -> PathBuf {
-    PathBuf::from(DESTINATION).join(ext)
+fn res_des_dir(ext: &OsStr, destination: &OsStr) -> PathBuf {
+    PathBuf::from(destination).join(ext)
 }
 
 /**
  * Moves a file to the corresponding destination directory
  */
-fn handle_file(path: PathBuf) {
+fn handle_file(path: &PathBuf, destination: &PathBuf) {
     let extension = path.extension().unwrap();
-    let destination_directory = res_des_dir(&extension);
+    let destination_directory = res_des_dir(extension, destination.as_os_str());
 
     if !destination_directory.exists() {
         let result = std::fs::create_dir(&destination_directory);
 
         if result.is_err() {
-            println!("Failed to create directory");
+            println!("Failed to create directory \"{}\"", destination_directory.to_str().unwrap());
             return;
         }
     }

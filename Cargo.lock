@@ -3,4 +3,39 @@
 [[package]]
 name = "cleanup_files"
 version = "0.0.0"
+dependencies = [
+ "path-absolutize 1.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
+[[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "path-absolutize"
+version = "1.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "path-dedot 1.1.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "slash-formatter 2.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "path-dedot"
+version = "1.1.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "slash-formatter"
+version = "2.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[metadata]
+"checksum lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+"checksum path-absolutize 1.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "265d16267b3791ec932b0295e9b1dad29c5315ceb5edd4f48f3f0456ba01877f"
+"checksum path-dedot 1.1.13 (registry+https://github.com/rust-lang/crates.io-index)" = "9ee3abc848250ca4ebc13a41b0833723e8fc79dc70c441129a133c2a557830f8"
+"checksum slash-formatter 2.2.5 (registry+https://github.com/rust-lang/crates.io-index)" = "1327594da1d7a67977043c723273c3f218380d4f624fdd8ef6acd2dffd0e22b7"
