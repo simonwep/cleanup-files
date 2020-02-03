@@ -13,9 +13,36 @@ pub struct CLIArguments {
     pub args: HashMap<String, String>,
 }
 
+// TODO: Move to RawArguments?
+impl CLIArguments {
+    /**
+     * Resolves an argument by it's name and corresponding abbreviation.
+     * Panics if value is missing.
+     */
+    pub fn get_arg_value(&self, name: &str, abbr: &str) -> Option<&String> {
+
+        // Try to resolve from map
+        match self.args.get(name)
+            .or(self.args.get(abbr)) {
+            Some(t) => return Some(t),
+            None => ()
+        };
+
+        // Check if it was parsed without value
+        if self.flags.contains(&String::from(name)) ||
+            self.flags.contains(&String::from(abbr)) {
+            panic!(format!("Flag {}, {} expects a value!", name, abbr))
+        }
+
+        // Nothing found
+        return None;
+    }
+}
+
 fn print_help() {
-    println!("Usage: cleanup <source> <target> [options]");
-    println!("  -h, --help This help text");
+    println!("Usage: cleanup <source> <target> [options...]");
+    println!("  -h, --help                   This help text");
+    println!("  -e, --exclude <extension>... Skip files with one of the passed extensions");
 }
 
 /**
