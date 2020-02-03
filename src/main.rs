@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-mod fs_utils;
-mod params;
+mod utils;
+mod cli;
 
 fn main() {
 
@@ -10,14 +10,14 @@ fn main() {
         .ok().expect("Failed to resolve current executable.");
 
     // Parse arguments and read directory entries
-    let op = params::parse_args(std::env::args());
-    let dir = std::fs::read_dir(&op.source)
-        .ok().expect(&format!("Failed to read directory: {:?}", op.source));
+    let args = cli::parse_args(std::env::args());
+    let dir = std::fs::read_dir(&args.source)
+        .ok().expect(&format!("Failed to read directory: {:?}", args.source));
 
-    println!("Using the following paths:\n Source: {:?}\n Target: {:?}", op.source, op.target);
+    println!("Using the following paths:\n Source: {:?}\n Target: {:?}", args.source, args.target);
 
     // Create missing directories
-    match fs_utils::create_dir_tree(&op.target) {
+    match utils::fs_utils::create_dir_tree(&args.target) {
         Ok(_) => (),
         Err(e) => return println!("Critical error: {}", e)
     };
@@ -29,7 +29,7 @@ fn main() {
 
                 // Path should point to a file and not be the current executable
                 if path != current_exe && path.is_file() {
-                    match handle_file(&path, &op.target) {
+                    match handle_file(&path, &args.target) {
                         Ok(_) => println!("Successfully moved {:?}", path),
                         Err(error) => println!("{}", error)
                     }
