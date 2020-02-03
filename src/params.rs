@@ -28,10 +28,11 @@ fn resolve_path(path: &String) -> PathBuf {
  */
 pub fn parse_args(args: Args) -> Params {
     let mut source = String::from(".");
-    let mut target = String::from("./misc");
+    let mut target = String::from("./.archive");
     let arguments: Vec<_> = args.collect();
     let argument_count = arguments.len();
 
+    // TODO: Flags?
     if argument_count > 1 {
         source = arguments.get(1).unwrap().to_owned();
         target = source.clone();
