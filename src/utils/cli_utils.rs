@@ -8,7 +8,7 @@ pub struct RawArguments {
     pub values: Vec<String>,
 
     // Standalone flags: -flag1 --flag2
-    pub flags: Vec<String>,
+    pub flags: Vec<String>
 }
 
 /**
@@ -29,12 +29,10 @@ pub fn parse_raw_args<T: Iterator<Item = String>>(raw_args: T) -> RawArguments {
 
         // If the value starts with a - it's a flag / argument
         if value.starts_with("-") {
-
             // There may be a value attached to it
             match iter.peek() {
                 Some(str) => {
                     if !str.starts_with("-") {
-
                         // Save argument
                         args.insert(value, iter.next().unwrap());
                         continue;
@@ -55,7 +53,7 @@ pub fn parse_raw_args<T: Iterator<Item = String>>(raw_args: T) -> RawArguments {
     return RawArguments {
         args,
         values,
-        flags,
+        flags
     };
 }
 
@@ -108,7 +106,9 @@ mod test {
 
     #[test]
     fn parse_mixed() {
-        let raw_args: Vec<&str> = vec!["_", "source", "source2", "-flag1", "-arg2", "arg-val2", "-flag2", "-a", "wo"];
+        let raw_args: Vec<&str> = vec![
+            "_", "source", "source2", "-flag1", "-arg2", "arg-val2", "-flag2", "-a", "wo",
+        ];
         let mut ex_args: HashMap<String, String> = HashMap::new();
         ex_args.insert(String::from("-arg2"), String::from("arg-val2"));
         ex_args.insert(String::from("-a"), String::from("wo"));

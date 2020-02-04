@@ -2,21 +2,25 @@ use std::path::PathBuf;
 
 use crate::cli::CLIArguments;
 
-mod utils;
 mod cli;
+mod utils;
 
 fn main() {
-
     // Resolve current executable to prevent sorting it
     let current_exe = std::env::current_exe()
-        .ok().expect("Failed to resolve current executable.");
+        .ok()
+        .expect("Failed to resolve current executable.");
 
     // Parse arguments and read directory entries
     let cli = cli::parse_args(std::env::args());
     let dir = std::fs::read_dir(&cli.source)
-        .ok().expect(&format!("Failed to read directory: {:?}", cli.source));
+        .ok()
+        .expect(&format!("Failed to read directory: {:?}", cli.source));
 
-    println!("Using the following paths:\n Source: {:?}\n Target: {:?}", cli.source, cli.target);
+    println!(
+        "Using the following paths:\n Source: {:?}\n Target: {:?}",
+        cli.source, cli.target
+    );
 
     // Create missing directories
     match utils::fs_utils::create_dir_tree(&cli.target) {
@@ -45,10 +49,14 @@ fn main() {
 /**
  * Moves a file to the corresponding destination directory
  */
-fn handle_file(path: &PathBuf, destination: &PathBuf, cli: &CLIArguments) -> Result<String, String> {
+fn handle_file(
+    path: &PathBuf,
+    destination: &PathBuf,
+    cli: &CLIArguments
+) -> Result<String, String> {
     let extension = match path.extension() {
         Some(os_str) => os_str,
-        None => return Err(format!("Failed to resolve extension of {:?}", path)),
+        None => return Err(format!("Failed to resolve extension of {:?}", path))
     };
 
     // User might want to exclude certain extension
@@ -68,17 +76,15 @@ fn handle_file(path: &PathBuf, destination: &PathBuf, cli: &CLIArguments) -> Res
     if !destination_directory.exists() {
         match std::fs::create_dir(&destination_directory) {
             Ok(_) => (),
-            Err(e) => return Err(
-                format!("Failed to create directory: {:?} ({})",
-                        destination_directory,
-                        e.to_string()
-                )
-            )
+            Err(e) => Err(format!(
+                "Failed to create directory: {:?} ({})",
+                destination_directory,
+                e.to_string()
+            ))
         }
     }
-    
-    let target = PathBuf::from(&destination_directory)
-        .join(path.file_name().unwrap());
+
+    let target = PathBuf::from(&destination_directory).join(path.file_name().unwrap());
 
     // Check if dry-run should be performed
     if cli.has_flag("-d", "--dry-run") {

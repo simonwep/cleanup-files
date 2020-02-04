@@ -10,7 +10,7 @@ pub struct CLIArguments {
     pub source: PathBuf,
     pub target: PathBuf,
     pub flags: Vec<String>,
-    pub args: HashMap<String, String>,
+    pub args: HashMap<String, String>
 }
 
 // TODO: Move to RawArguments?
@@ -20,17 +20,14 @@ impl CLIArguments {
      * Panics if value is missing.
      */
     pub fn get_arg_value(&self, name: &str, abbr: &str) -> Option<&String> {
-
         // Try to resolve from map
-        match self.args.get(name)
-            .or(self.args.get(abbr)) {
+        match self.args.get(name).or(self.args.get(abbr)) {
             Some(t) => return Some(t),
             None => ()
         };
 
         // Check if it was parsed without value
-        if self.flags.contains(&String::from(name)) ||
-            self.flags.contains(&String::from(abbr)) {
+        if self.flags.contains(&String::from(name)) || self.flags.contains(&String::from(abbr)) {
             panic!(format!("Flag {}, {} expects a value!", name, abbr))
         }
 
@@ -38,18 +35,14 @@ impl CLIArguments {
         return None;
     }
 
-
     /**
      * Checks whenever a flag or its corresponding abbreviation is used.
      */
     pub fn has_flag(&self, name: &str, abbr: &str) -> bool {
-
         // Check if flags
-        return self.flags.contains(&String::from(name)) ||
-            self.flags.contains(&String::from(abbr)) ||
-            self.args.get(name).or(
-                self.args.get(abbr)
-            ).is_some();
+        return self.flags.contains(&String::from(name))
+            || self.flags.contains(&String::from(abbr))
+            || self.args.get(name).or(self.args.get(abbr)).is_some();
     }
 }
 
@@ -85,8 +78,9 @@ pub fn parse_args(raw_args: Args) -> CLIArguments {
     let values_length = parsed_args.values.len();
 
     // Check if help-text is requested
-    if parsed_args.flags.contains(&String::from("-h")) ||
-        parsed_args.flags.contains(&String::from("--help")) {
+    if parsed_args.flags.contains(&String::from("-h"))
+        || parsed_args.flags.contains(&String::from("--help"))
+    {
         print_help();
         std::process::exit(0);
     }
@@ -111,6 +105,6 @@ pub fn parse_args(raw_args: Args) -> CLIArguments {
         source: resolve_path(&source),
         target: resolve_path(&target),
         args: parsed_args.args,
-        flags: parsed_args.flags,
+        flags: parsed_args.flags
     };
 }
