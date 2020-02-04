@@ -76,12 +76,17 @@ fn handle_file(path: &PathBuf, destination: &PathBuf, cli: &CLIArguments) -> Res
             )
         }
     }
-
+    
     let target = PathBuf::from(&destination_directory)
         .join(path.file_name().unwrap());
 
+    // Check if dry-run should be performed
+    if cli.has_flag("-d", "--dry-run") {
+        return Ok(String::from("Dry run - ok"));
+    }
+
     return match std::fs::rename(&path, &target) {
-        Ok(_) => Ok(String::from("Successfully moved")),
+        Ok(_) => Ok(String::from("Ok")),
         Err(_) => Err(String::from("Failed to move file."))
     };
 }

@@ -16,7 +16,7 @@ pub struct CLIArguments {
 // TODO: Move to RawArguments?
 impl CLIArguments {
     /**
-     * Resolves an argument by it's name and corresponding abbreviation.
+     * Resolves an argument by its name and corresponding abbreviation.
      * Panics if value is missing.
      */
     pub fn get_arg_value(&self, name: &str, abbr: &str) -> Option<&String> {
@@ -37,12 +37,27 @@ impl CLIArguments {
         // Nothing found
         return None;
     }
+
+
+    /**
+     * Checks whenever a flag or its corresponding abbreviation is used.
+     */
+    pub fn has_flag(&self, name: &str, abbr: &str) -> bool {
+
+        // Check if flags
+        return self.flags.contains(&String::from(name)) ||
+            self.flags.contains(&String::from(abbr)) ||
+            self.args.get(name).or(
+                self.args.get(abbr)
+            ).is_some();
+    }
 }
 
 fn print_help() {
     println!("Usage: cleanup <source> <target> [options...]");
     println!("  -h, --help                   This help text");
     println!("  -e, --exclude <extension>... Skip files with one of the passed extensions");
+    println!("  -d, --dry-run                Perform a dry-run without actually moving anything");
 }
 
 /**
