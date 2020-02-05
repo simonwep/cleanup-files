@@ -1,9 +1,43 @@
+#![allow(dead_code)]
 use std::path::PathBuf;
 
-use crate::cli::CLIArguments;
+use path_absolutize::Absolutize;
+
+use crate::cli::flag::CLIFlag;
+use crate::cli::value::CLIValue;
+use crate::cli::{CLIApp, CLIResult};
 
 mod cli;
-mod utils;
+mod fs_utils;
+
+/**
+ * Parses the command-line-arguments for this utils-utility
+ */
+pub fn resolve_directories(result: &CLIResult) -> (PathBuf, PathBuf) {
+    let mut source = String::from(".");
+    let mut target = String::from("./.archive");
+
+    if result.values.contains_key("source") {
+        source = result.values.get("source").unwrap().clone();
+        target = source.clone();
+        target.push_str("/misc")
+    }
+
+    if result.values.contains_key("target") {
+        target = result.values.get("target").unwrap().clone();
+    }
+
+    let source_path = PathBuf::from(source).absolutize().unwrap();
+    let target_path = PathBuf::from(target).absolutize().unwrap();
+
+    // Create missing directories
+    match fs_utils::create_dir_tree(&target_path) {
+        Ok(_) => (),
+        Err(e) => panic!("Critical error: {}", e)
+    };
+
+    return (source_path, target_path);
+}
 
 fn main() {
     // Resolve current executable to prevent sorting it
@@ -11,22 +45,77 @@ fn main() {
         .ok()
         .expect("Failed to resolve current executable.");
 
+    // Create CLI-App
+    let cli_app = CLIApp::new()
+        .set_name("cleanup".to_string())
+        .add_flag(
+            CLIFlag::new("dry")
+                .description("Performs a dry-run, e.g. nothing get's moved.")
+                .abbr("-d")
+                .abbr("--dry")
+                .abbr("--dry-run")
+        )
+        .add_flag(
+            CLIFlag::new("exclude")
+                .description("Exclude certain files by their extension.")
+                .expects_value(true)
+                .value_description("extensions...")
+                .abbr("-e")
+                .abbr("--exclude")
+        )
+        .add_flag(
+            CLIFlag::new("help")
+                .description("Prints this help text.")
+                .abbr("-h")
+                .abbr("--help")
+        )
+        .add_flag(
+            CLIFlag::new("version")
+                .description("Prints version.")
+                .abbr("-v")
+                .abbr("--version")
+        )
+        .add_value(
+            CLIValue::new("source")
+                .required(false)
+                .description("Source directory")
+        )
+        .add_value(
+            CLIValue::new("target")
+                .required(false)
+                .description("Target directory")
+        );
+
+    // Parse arguments
+    let app: CLIResult = match cli_app.consume(std::env::args()) {
+        Err(e) => {
+            println!("{}\n", e.as_str());
+            cli_app.print_help();
+            return;
+        }
+        Ok(v) => v
+    };
+
+    // Check if version or help is requested
+    if app.flags.contains(&String::from("help")) {
+        cli_app.print_help();
+        return;
+    } else if app.flags.contains(&String::from("version")) {
+        println!("{} v0.0.0", cli_app.name);
+        return;
+    }
+
+    let (source, target) = resolve_directories(&app);
+
     // Parse arguments and read directory entries
-    let cli = cli::parse_args(std::env::args());
-    let dir = std::fs::read_dir(&cli.source)
+    let dir = std::fs::read_dir(&source)
         .ok()
-        .expect(&format!("Failed to read directory: {:?}", cli.source));
+        .expect(&format!("Failed to read directory: {:?}", source));
 
     println!(
         "Using the following paths:\n Source: {:?}\n Target: {:?}",
-        cli.source, cli.target
+        source, target
     );
-
-    // Create missing directories
-    match utils::fs_utils::create_dir_tree(&cli.target) {
-        Ok(_) => (),
-        Err(e) => return println!("Critical error: {}", e)
-    };
 
     for result in dir {
         match result {
@@ -35,7 +124,7 @@ fn main() {
 
                 // Path should point to a file and not be the current executable
                 if path != current_exe && path.is_file() {
-                    match handle_file(&path, &cli.target, &cli) {
+                    match handle_file(&path, &target, &app) {
                         Ok(msg) => println!("({}) {:?}", msg, path),
                         Err(error) => println!("{}", error)
                     }
@@ -49,18 +138,14 @@ fn main() {
 /**
  * Moves a file to the corresponding destination directory
  */
-fn handle_file(
-    path: &PathBuf,
-    destination: &PathBuf,
-    cli: &CLIArguments
-) -> Result<String, String> {
+fn handle_file(path: &PathBuf, destination: &PathBuf, app: &CLIResult) -> Result<String, String> {
     let extension = match path.extension() {
         Some(os_str) => os_str,
         None => return Err(format!("Failed to resolve extension of {:?}", path))
     };
 
     // User might want to exclude certain extension
-    match cli.get_arg_value("--exclude", "-e") {
+    match app.args.get("exclude") {
         None => (),
         Some(value) => {
             let list: Vec<&str> = value.split(",").collect();
@@ -76,18 +161,20 @@ fn handle_file(
     if !destination_directory.exists() {
         match std::fs::create_dir(&destination_directory) {
             Ok(_) => (),
-            Err(e) => Err(format!(
-                "Failed to create directory: {:?} ({})",
-                destination_directory,
-                e.to_string()
-            ))
+            Err(e) => {
+                return Err(format!(
+                    "Failed to create directory: {:?} ({})",
+                    destination_directory,
+                    e.to_string()
+                ));
+            }
         }
     }
 
     let target = PathBuf::from(&destination_directory).join(path.file_name().unwrap());
 
     // Check if dry-run should be performed
-    if cli.has_flag("-d", "--dry-run") {
+    if app.flags.contains(&String::from("dry")) {
         return Ok(String::from("Dry run - ok"));
     }
 
