@@ -65,7 +65,7 @@ fn main() {
         cli_app.print_help();
         return;
     } else if app.has_flag("version") {
-        println!("{} v0.0.0", cli_app.name);
+        println!(env!("CARGO_PKG_VERSION"));
         return;
     }
 
