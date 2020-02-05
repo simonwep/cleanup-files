@@ -16,8 +16,8 @@ impl CLIFlag {
     pub fn new(name: &str) -> CLIFlag {
         CLIFlag {
             name: name.to_owned(),
-            description: String::from("Unknown"),
-            value_description: String::from("value"),
+            description: String::default(),
+            value_description: String::default(),
             expects_value: false,
             abbr: Vec::new(),
             validator: |_| Ok(())
@@ -76,7 +76,71 @@ impl CLIFlag {
     }
 
     /// Checks whenever this flag contains a specific abbreviation.
-    pub fn has_abbr(&self, other: &String) -> bool {
-        self.abbr.contains(other)
+    pub fn has_abbr(&self, other: &str) -> bool {
+        self.abbr.contains(&other.to_string())
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::cli::flag::CLIFlag;
+
+    #[test]
+    fn test_create() {
+        let flag = CLIFlag::new("Hello")
+            .description("Hello World")
+            .abbr("-a")
+            .abbr("--abbr")
+            .abbr("--abbr-ex");
+
+        assert_eq!(flag.name, "Hello");
+        assert_eq!(flag.description, "Hello World");
+        assert_eq!(flag.abbr, vec!["-a", "--abbr", "--abbr-ex"]);
+    }
+
+    #[test]
+    fn test_create_with_value() {
+        let flag = CLIFlag::new("Hello")
+            .expects_value(true)
+            .value_description("My Value");
+
+        assert_eq!(flag.value_description, "My Value");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_with_invalid_value_description_call() {
+        CLIFlag::new("Hello").value_description("My Value");
+    }
+
+    #[test]
+    fn test_to_string() {
+        let (usage, desc) = CLIFlag::new("Hello")
+            .expects_value(true)
+            .value_description("hello")
+            .description("Hello World")
+            .abbr("-a")
+            .abbr("--abbr")
+            .to_string();
+
+        assert_eq!(desc, "Hello World");
+        assert_eq!(usage, "-a, --abbr <hello>")
+    }
+
+    #[test]
+    fn test_has_abbr() {
+        let flag = CLIFlag::new("Hello")
+            .abbr("-a")
+            .abbr("--abbr")
+            .abbr("--woo")
+            .abbr("--woo-baz");
+
+        assert!(flag.has_abbr("-a"));
+        assert!(flag.has_abbr("--abbr"));
+        assert!(flag.has_abbr("--woo"));
+        assert!(flag.has_abbr("--woo-baz"));
+        assert!(!flag.has_abbr("--woo-bum"));
+        assert!(!flag.has_abbr("--foo"));
+        assert!(!flag.has_abbr("s"));
     }
 }
