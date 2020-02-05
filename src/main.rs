@@ -4,8 +4,8 @@ use crate::cli::value::CLIValue;
 use crate::cli::CLIApp;
 
 mod cli;
-mod fs_utils;
 mod run;
+mod utils;
 
 fn main() {
     // Create CLI-App
