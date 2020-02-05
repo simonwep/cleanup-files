@@ -25,8 +25,8 @@ impl CLIApp {
     }
 
     /// Sets a name for this app
-    pub fn set_name(mut self, name: String) -> CLIApp {
-        self.name = name;
+    pub fn set_name(mut self, name: &str) -> CLIApp {
+        self.name = name.to_string();
         self
     }
 
