@@ -1,21 +1,17 @@
 use std::collections::HashMap;
 
 use flag::CLIFlag;
+use result::CLIResult;
 use value::CLIValue;
 
 pub mod flag;
+pub mod result;
 pub mod value;
-
-pub struct CLIResult {
-    pub values: HashMap<String, String>,
-    pub args: HashMap<String, String>,
-    pub flags: Vec<String>,
-}
 
 pub struct CLIApp {
     pub name: String,
     pub flags: Vec<CLIFlag>,
-    pub values: Vec<CLIValue>,
+    pub values: Vec<CLIValue>
 }
 
 impl CLIApp {
@@ -24,7 +20,7 @@ impl CLIApp {
         CLIApp {
             name: String::new(),
             flags: Vec::new(),
-            values: Vec::new(),
+            values: Vec::new()
         }
     }
 
@@ -166,11 +162,7 @@ impl CLIApp {
             }
         }
 
-        Ok(CLIResult {
-            args,
-            values,
-            flags,
-        })
+        Ok(CLIResult::from(values, args, flags))
     }
 
     /// Creates a usage-description out of the currently defined attributes.

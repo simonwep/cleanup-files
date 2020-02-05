@@ -4,8 +4,9 @@ use std::path::PathBuf;
 use path_absolutize::Absolutize;
 
 use crate::cli::flag::CLIFlag;
+use crate::cli::result::CLIResult;
 use crate::cli::value::CLIValue;
-use crate::cli::{CLIApp, CLIResult};
+use crate::cli::CLIApp;
 
 mod cli;
 mod fs_utils;
@@ -17,14 +18,14 @@ pub fn resolve_directories(result: &CLIResult) -> (PathBuf, PathBuf) {
     let mut source = String::from(".");
     let mut target = String::from("./.archive");
 
-    if result.values.contains_key("source") {
-        source = result.values.get("source").unwrap().clone();
+    if result.has_value("source") {
+        source = result.get_value("source").unwrap().clone();
         target = source.clone();
         target.push_str("/misc")
     }
 
-    if result.values.contains_key("target") {
-        target = result.values.get("target").unwrap().clone();
+    if result.has_value("target") {
+        target = result.get_value("target").unwrap().clone();
     }
 
     let source_path = PathBuf::from(source).absolutize().unwrap();
@@ -97,10 +98,10 @@ fn main() {
     };
 
     // Check if version or help is requested
-    if app.flags.contains(&String::from("help")) {
+    if app.has_flag("help") {
         cli_app.print_help();
         return;
-    } else if app.flags.contains(&String::from("version")) {
+    } else if app.has_flag("version") {
         println!("{} v0.0.0", cli_app.name);
         return;
     }
@@ -145,7 +146,7 @@ fn handle_file(path: &PathBuf, destination: &PathBuf, app: &CLIResult) -> Result
     };
 
     // User might want to exclude certain extension
-    match app.args.get("exclude") {
+    match app.get_arg("exclude") {
         None => (),
         Some(value) => {
             let list: Vec<&str> = value.split(",").collect();
@@ -174,7 +175,7 @@ fn handle_file(path: &PathBuf, destination: &PathBuf, app: &CLIResult) -> Result
     let target = PathBuf::from(&destination_directory).join(path.file_name().unwrap());
 
     // Check if dry-run should be performed
-    if app.flags.contains(&String::from("dry")) {
+    if app.has_flag("dry") {
         return Ok(String::from("Dry run - ok"));
     }
 
