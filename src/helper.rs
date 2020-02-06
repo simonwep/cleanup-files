@@ -9,21 +9,13 @@ use crate::utils::fs;
 * Resolves source and target directory.
 */
 pub fn resolve_directories(result: &CLIResult) -> (PathBuf, PathBuf) {
-    let mut source = String::from(".");
-    let mut target = String::from("./.archive");
+    let source_path = PathBuf::from(result.get_value("source").unwrap().clone())
+        .absolutize()
+        .unwrap();
 
-    if result.has_value("source") {
-        source = result.get_value("source").unwrap().clone();
-        target = source.clone();
-        target.push_str("/misc")
-    }
-
-    if result.has_value("target") {
-        target = result.get_value("target").unwrap().clone();
-    }
-
-    let source_path = PathBuf::from(source).absolutize().unwrap();
-    let target_path = PathBuf::from(target).absolutize().unwrap();
+    let target_path = PathBuf::from(result.get_value("target").unwrap().clone())
+        .absolutize()
+        .unwrap();
 
     // Create missing directories
     match fs::create_dir_tree(&target_path) {

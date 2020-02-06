@@ -13,7 +13,7 @@ pub struct CLIFlag {
 /// This isn't best practice but it's the easiest way and I just want to use it as is.
 impl CLIFlag {
     /// Creates a new CLIFlag.
-    pub fn new(name: &str) -> CLIFlag {
+    pub fn new(name: &str) -> Self {
         CLIFlag {
             name: name.to_owned(),
             description: String::default(),
@@ -25,19 +25,19 @@ impl CLIFlag {
     }
 
     /// Adds a new abbreviation.
-    pub fn abbr(mut self, abbr: &str) -> CLIFlag {
+    pub fn abbr(mut self, abbr: &str) -> Self {
         self.abbr.push(abbr.to_string());
         self
     }
 
     /// Makes the flag expecting a value passed to it.
-    pub fn expects_value(mut self, value: bool) -> CLIFlag {
+    pub fn expects_value(mut self, value: bool) -> Self {
         self.expects_value = value;
         self
     }
 
     /// Updates the description of the value
-    pub fn value_description(mut self, description: &str) -> CLIFlag {
+    pub fn value_description(mut self, description: &str) -> Self {
         // Description can only be set on flags with value
         if !self.expects_value {
             panic!(format!(
@@ -51,13 +51,13 @@ impl CLIFlag {
     }
 
     /// Sets a validator for this flag
-    pub fn validate(mut self, validator: fn(&String) -> Result<(), String>) -> CLIFlag {
+    pub fn validate(mut self, validator: fn(&String) -> Result<(), String>) -> Self {
         self.validator = validator;
         self
     }
 
     /// Sets a description
-    pub fn description(mut self, description: &str) -> CLIFlag {
+    pub fn description(mut self, description: &str) -> Self {
         self.description = description.to_string();
         self
     }

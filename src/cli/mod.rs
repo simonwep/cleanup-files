@@ -16,7 +16,7 @@ pub struct CLIApp {
 
 impl CLIApp {
     /// Creates a new cli-application
-    pub fn new() -> CLIApp {
+    pub fn new() -> Self {
         CLIApp {
             name: String::new(),
             flags: Vec::new(),
@@ -25,14 +25,14 @@ impl CLIApp {
     }
 
     /// Sets a name for this app
-    pub fn set_name(mut self, name: &str) -> CLIApp {
+    pub fn set_name(mut self, name: &str) -> Self {
         self.name = name.to_string();
         self
     }
 
     /// Defines a flag
     /// Panics if name or one of the abbreviations is already in use.
-    pub fn add_flag(mut self, new_flag: CLIFlag) -> CLIApp {
+    pub fn add_flag(mut self, new_flag: CLIFlag) -> Self {
         // Check for duplicates
         for flag in &self.flags {
             // Check name
@@ -60,7 +60,7 @@ impl CLIApp {
 
     /// Adds a new value
     /// Panics if the name is already taken
-    pub fn add_value(mut self, val: CLIValue) -> CLIApp {
+    pub fn add_value(mut self, val: CLIValue) -> Self {
         // Check if name is already in use
         if self
             .values
@@ -141,19 +141,24 @@ impl CLIApp {
         for val in &self.values {
             // Validate defined values
             if values.contains_key(&val.name) {
-                // Call validator
-                match (val.validator)(&val.name) {
-                    Err(e) => return Err(e),
-                    Ok(_) => ()
+                match val.validator {
+                    None => (),
+                    Some(validator) => match validator(&val.name) {
+                        Err(e) => return Err(e),
+                        Ok(_) => ()
+                    }
                 }
 
                 continue;
             }
 
             // Use default if not set
-            if val.has_default {
-                values.insert(val.name.clone(), val.default.clone());
-                continue;
+            match val.default {
+                None => (),
+                Some(def) => {
+                    values.insert(val.name.clone(), def(&values));
+                    continue;
+                }
             }
 
             // Check if required

@@ -41,11 +41,17 @@ fn main() {
         )
         .add_value(
             CLIValue::new("source")
+                .default(|_| ".".to_string())
                 .required(false)
                 .description("Source directory")
         )
         .add_value(
             CLIValue::new("target")
+                .default(|list| {
+                    let mut source = list.get("source").unwrap().clone();
+                    source.push_str("/misc");
+                    source
+                })
                 .required(false)
                 .description("Target directory")
         );
