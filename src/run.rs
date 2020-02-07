@@ -11,11 +11,6 @@ pub fn start(app: CLIResult) {
     // Source and target directory
     let (source, target) = resolve_directories(&app);
 
-    // Parse arguments and read directory entries
-    let dir = std::fs::read_dir(&source)
-        .ok()
-        .expect(&format!("Failed to read directory: {:?}", source));
-
     println!(
         "Using the following paths:\n Source: {:?}\n Target: {:?}",
         source, target
@@ -29,17 +24,23 @@ pub fn start(app: CLIResult) {
             .unwrap()
             .split(",")
             .map(|s| s.to_string())
-            .collect()
+            .collect(),
     };
+
+    // Parse arguments and read directory entries
+    let dir = std::fs::read_dir(&source)
+        .ok()
+        .expect(&format!("Failed to read directory: {:?}", source));
 
     for result in dir {
         match result {
+            Err(error) => println!("{}", error),
             Ok(entry) => {
                 let path = entry.path();
 
                 // Skipped current file and other non-file entries
-                if path == current_exe && !path.is_file() {
-                    return;
+                if path.eq(&current_exe) || !path.is_file() {
+                    continue;
                 }
 
                 match accept(&path, &target, &options) {
@@ -49,9 +50,8 @@ pub fn start(app: CLIResult) {
                         FileResult::Skipped => println!("[skipped] {:?}", path),
                         FileResult::Checked => println!("[matched] {:?}", path)
                     }
-                }
+                };
             }
-            Err(error) => println!("{}", error)
-        }
+        };
     }
 }

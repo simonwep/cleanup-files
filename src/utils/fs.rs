@@ -1,5 +1,4 @@
 use path_absolutize::Absolutize;
-use std::io::Error;
 use std::path::PathBuf;
 
 /**

@@ -1,7 +1,5 @@
 use std::path::PathBuf;
 
-use crate::cli::result::CLIResult;
-
 pub struct Options {
     pub excluded: Vec<String>,
     pub dry_run: bool
@@ -34,6 +32,11 @@ pub fn accept(
         return Ok(FileResult::Skipped);
     }
 
+    // Check if dry-run should be performed
+    if options.dry_run {
+        return Ok(FileResult::Checked);
+    }
+
     let destination_directory = PathBuf::from(destination).join(extension);
     if !destination_directory.exists() {
         match std::fs::create_dir(&destination_directory) {
@@ -49,11 +52,6 @@ pub fn accept(
     }
 
     let target = PathBuf::from(&destination_directory).join(path.file_name().unwrap());
-
-    // Check if dry-run should be performed
-    if options.dry_run {
-        return Ok(FileResult::Checked);
-    }
 
     match std::fs::rename(&path, &target) {
         Ok(_) => Ok(FileResult::Moved),
