@@ -1,6 +1,6 @@
-use std::path::PathBuf;
-use path_absolutize::Absolutize;
 use crate::cli::result::CLIResult;
+use path_absolutize::Absolutize;
+use std::path::PathBuf;
 
 /**
 * Resolves source and target directory.

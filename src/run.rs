@@ -1,3 +1,5 @@
+use colored::Colorize;
+
 use crate::cli::result::CLIResult;
 use crate::file::{accept, FileResult, Options};
 use crate::helper::resolve_directories;
@@ -12,7 +14,7 @@ pub fn start(app: CLIResult) {
     let (source, target) = resolve_directories(&app);
 
     println!(
-        "Using the following paths:\n Source: {:?}\n Target: {:?}",
+        "Using the following paths:\n | Source: {:?}\n | Target: {:?}\n",
         source, target
     );
 
@@ -24,7 +26,7 @@ pub fn start(app: CLIResult) {
             .unwrap()
             .split(",")
             .map(|s| s.to_string())
-            .collect(),
+            .collect()
     };
 
     // Parse arguments and read directory entries
@@ -44,11 +46,11 @@ pub fn start(app: CLIResult) {
                 }
 
                 match accept(&path, &target, &options) {
-                    Err(error) => println!("{}", error),
+                    Err(error) => println!("{} {:?}", "✖ Errored:".red(), error),
                     Ok(msg) => match msg {
-                        FileResult::Moved => println!("[moved] {:?}", path),
-                        FileResult::Skipped => println!("[skipped] {:?}", path),
-                        FileResult::Checked => println!("[matched] {:?}", path)
+                        FileResult::Moved => println!("{} {:?}", "♻ Moved:".green(), path),
+                        FileResult::Skipped => println!("{} {:?}", "⊙ Skipped:".yellow(), path),
+                        FileResult::Checked => println!("{} {:?}", "✔ Matched:".cyan(), path)
                     }
                 };
             }
