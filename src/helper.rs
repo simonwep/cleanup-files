@@ -3,7 +3,6 @@ use std::path::PathBuf;
 use path_absolutize::Absolutize;
 
 use crate::cli::result::CLIResult;
-use crate::utils::fs;
 
 /**
 * Resolves source and target directory.
@@ -18,7 +17,7 @@ pub fn resolve_directories(result: &CLIResult) -> (PathBuf, PathBuf) {
         .unwrap();
 
     // Create missing directories
-    match fs::create_dir_tree(&target_path) {
+    match std::fs::create_dir_all(&target_path) {
         Ok(_) => (),
         Err(e) => panic!("Critical error: {}", e)
     };
