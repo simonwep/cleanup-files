@@ -1,5 +1,5 @@
 use crate::cli::result::CLIResult;
-use crate::file::{accept, FileResult};
+use crate::file::{accept, FileResult, Options};
 use crate::helper::resolve_directories;
 
 pub fn start(app: CLIResult) {
@@ -21,6 +21,17 @@ pub fn start(app: CLIResult) {
         source, target
     );
 
+    let options = Options {
+        dry_run: app.has_flag("dry"),
+        excluded: app
+            .get_arg("excluded")
+            .or(Option::Some(&String::default()))
+            .unwrap()
+            .split(",")
+            .map(|s| s.to_string())
+            .collect()
+    };
+
     for result in dir {
         match result {
             Ok(entry) => {
@@ -31,7 +42,7 @@ pub fn start(app: CLIResult) {
                     return;
                 }
 
-                match accept(&path, &target, &app) {
+                match accept(&path, &target, &options) {
                     Err(error) => println!("{}", error),
                     Ok(msg) => match msg {
                         FileResult::Moved => println!("[moved] {:?}", path),

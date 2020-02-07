@@ -20,7 +20,7 @@ fn main() {
                 .abbr("--dry-run")
         )
         .add_flag(
-            CLIFlag::new("exclude")
+            CLIFlag::new("excluded")
                 .description("Exclude certain files by their extension.")
                 .expects_value(true)
                 .value_description("extensions...")

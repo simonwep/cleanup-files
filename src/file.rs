@@ -2,6 +2,11 @@ use std::path::PathBuf;
 
 use crate::cli::result::CLIResult;
 
+pub struct Options {
+    pub excluded: Vec<String>,
+    pub dry_run: bool
+}
+
 pub enum FileResult {
     Moved,
     Skipped,
@@ -14,7 +19,7 @@ pub enum FileResult {
 pub fn accept(
     path: &PathBuf,
     destination: &PathBuf,
-    app: &CLIResult
+    options: &Options
 ) -> Result<FileResult, String> {
     let extension = match path.extension() {
         Some(os_str) => os_str,
@@ -22,16 +27,11 @@ pub fn accept(
     };
 
     // User might want to exclude certain extension
-    match app.get_arg("exclude") {
-        None => (),
-        Some(value) => {
-            let list: Vec<&str> = value.split(",").collect();
-
-            // Check if extension shall be skipped
-            if list.contains(&extension.to_str().unwrap()) {
-                return Ok(FileResult::Skipped);
-            }
-        }
+    if options
+        .excluded
+        .contains(&extension.to_str().unwrap().to_string())
+    {
+        return Ok(FileResult::Skipped);
     }
 
     let destination_directory = PathBuf::from(destination).join(extension);
@@ -51,7 +51,7 @@ pub fn accept(
     let target = PathBuf::from(&destination_directory).join(path.file_name().unwrap());
 
     // Check if dry-run should be performed
-    if app.has_flag("dry") {
+    if options.dry_run {
         return Ok(FileResult::Checked);
     }
 
