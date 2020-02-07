@@ -13,6 +13,12 @@ fn main() {
     let cli_app = CLIApp::new()
         .set_name("cleanup")
         .add_flag(
+            CLIFlag::new("log")
+                .description("Creates / updates a log-file in the target folder.")
+                .abbr("-l")
+                .abbr("--log-file")
+        )
+        .add_flag(
             CLIFlag::new("dry")
                 .description("Performs a dry-run, e.g. nothing get's moved.")
                 .abbr("-d")
@@ -24,8 +30,8 @@ fn main() {
                 .description("Exclude certain files by their extension.")
                 .expects_value(true)
                 .value_description("extensions...")
-                .abbr("-ext")
-                .abbr("--extensions")
+                .abbr("-e")
+                .abbr("--ext")
         )
         .add_flag(
             CLIFlag::new("help")
@@ -71,7 +77,7 @@ fn main() {
         cli_app.print_help();
         return;
     } else if app.has_flag("version") {
-        println!(env!("CARGO_PKG_VERSION"));
+        println!("v{}", env!("CARGO_PKG_VERSION"));
         return;
     }
 

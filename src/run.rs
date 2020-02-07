@@ -1,3 +1,7 @@
+use std::fs::OpenOptions;
+use std::io::Write;
+use std::path::PathBuf;
+
 use colored::Colorize;
 
 use crate::cli::result::CLIResult;
@@ -34,6 +38,8 @@ pub fn start(app: CLIResult) {
         .ok()
         .expect(&format!("Failed to read directory: {:?}", source));
 
+    // Log
+    let mut log: Vec<(FileResult, PathBuf)> = Vec::new();
     for result in dir {
         match result {
             Err(error) => println!("{}", error),
@@ -45,15 +51,54 @@ pub fn start(app: CLIResult) {
                     continue;
                 }
 
-                match accept(&path, &target, &options) {
-                    Err(error) => println!("{} {:?}", "✖ Errored:".red(), error),
-                    Ok(msg) => match msg {
-                        FileResult::Moved => println!("{} {:?}", "♻ Moved:".green(), path),
-                        FileResult::Skipped => println!("{} {:?}", "⊙ Skipped:".yellow(), path),
-                        FileResult::Checked => println!("{} {:?}", "✔ Matched:".cyan(), path)
-                    }
+                let res = accept(&path, &target, &options);
+
+                // Print message
+                match &res {
+                    FileResult::Errored(error) => println!("{} {:?}", "✖ Errored:".red(), error),
+                    FileResult::Moved => println!("{} {:?}", "♻ Moved:".green(), path),
+                    FileResult::Skipped => println!("{} {:?}", "⊙ Skipped:".yellow(), path),
+                    FileResult::Checked => println!("{} {:?}", "✔ Matched:".cyan(), path)
                 };
+
+                // Push to logs
+                log.push((res, path));
             }
         };
+    }
+
+    // Append to log-file if enabled
+    // Ignore it if a dry-run is being performed
+    if app.has_flag("log") && !app.has_flag("dry") {
+        let log_file_path = target.join("cleanup.log");
+
+        if !log_file_path.exists() {
+            std::fs::write(&log_file_path, "")
+                .ok()
+                .expect(&format!("Failed to create log-file {:?}", log_file_path))
+        }
+
+        let mut log_file = OpenOptions::new()
+            .append(true)
+            .open(&log_file_path)
+            .unwrap();
+
+        for (res, path) in log {
+            log_file
+                .write(
+                    (match res {
+                        FileResult::Errored(error) => format!("[ERRORED] ({}) {:?}", error, path),
+                        FileResult::Moved => format!("[MOBED] {:?}", path),
+                        FileResult::Skipped => format!("[Skipped] {:?}", path),
+                        FileResult::Checked => format!("[Checked] {:?}", path)
+                    })
+                    .as_bytes()
+                )
+                .and(log_file.write("\n".as_bytes()))
+                .ok()
+                .expect(&format!("Failed to update log-file {:?}", log_file_path));
+        }
+
+        println!("{} {:?}", "⚙ Log file updated:".cyan(), &log_file_path);
     }
 }
