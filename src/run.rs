@@ -1,6 +1,5 @@
 use std::fs::OpenOptions;
 use std::io::Write;
-use std::path::PathBuf;
 
 use colored::Colorize;
 
@@ -39,12 +38,13 @@ pub fn start(app: CLIResult) {
         .expect(&format!("Failed to read directory: {:?}", source));
 
     // Log
-    let mut log: Vec<(FileResult, PathBuf)> = Vec::new();
+    let mut log: Vec<(FileResult, String)> = Vec::new();
     for result in dir {
         match result {
             Err(error) => println!("{}", error),
             Ok(entry) => {
                 let path = entry.path();
+                let raw_path = String::from(path.to_str().unwrap());
 
                 // Skipped current file and other non-file entries
                 if path.eq(&current_exe) || !path.is_file() {
@@ -55,14 +55,14 @@ pub fn start(app: CLIResult) {
 
                 // Print message
                 match &res {
-                    FileResult::Errored(error) => println!("{} {:?}", "✖ Errored:".red(), error),
-                    FileResult::Moved => println!("{} {:?}", "♻ Moved:".green(), path),
-                    FileResult::Skipped => println!("{} {:?}", "⊙ Skipped:".yellow(), path),
-                    FileResult::Checked => println!("{} {:?}", "✔ Matched:".cyan(), path)
+                    FileResult::Errored(error) => println!("{} {}", "✖ Errored:".red(), error),
+                    FileResult::Moved => println!("{} {}", "♻ Moved:".green(), raw_path),
+                    FileResult::Skipped => println!("{} {}", "⊙ Skipped:".yellow(), raw_path),
+                    FileResult::Checked => println!("{} {}", "✔ Matched:".cyan(), raw_path)
                 };
 
                 // Push to logs
-                log.push((res, path));
+                log.push((res, raw_path));
             }
         };
     }
@@ -91,10 +91,10 @@ pub fn start(app: CLIResult) {
             log_file
                 .write(
                     (match res {
-                        FileResult::Errored(error) => format!("[ERRORED] ({}) {:?}", error, path),
-                        FileResult::Moved => format!("[MOVED] {:?}", path),
-                        FileResult::Skipped => format!("[Skipped] {:?}", path),
-                        FileResult::Checked => format!("[Checked] {:?}", path)
+                        FileResult::Errored(error) => format!("[ERRORED] ({}) {}", error, path),
+                        FileResult::Moved => format!("[MOVED] {}", path),
+                        FileResult::Skipped => format!("[Skipped] {}", path),
+                        FileResult::Checked => format!("[Checked] {}", path)
                     })
                     .as_bytes()
                 )

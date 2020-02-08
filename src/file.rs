@@ -18,7 +18,12 @@ pub enum FileResult {
 pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileResult {
     let extension = match path.extension() {
         Some(os_str) => os_str,
-        None => return FileResult::Errored(format!("Failed to resolve extension of {:?}", path))
+        None => {
+            return FileResult::Errored(format!(
+                "Failed to resolve extension of \"{}\"",
+                path.to_str().unwrap()
+            ))
+        }
     };
 
     // User might want to exclude certain extension
