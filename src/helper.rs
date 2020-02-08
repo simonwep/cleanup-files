@@ -15,7 +15,7 @@ pub fn resolve_directories(app: &CLIResult) -> (PathBuf, PathBuf) {
         .unwrap();
 
     // Create missing directories
-    if app.has_flag("dry") {
+    if !app.has_flag("dry") {
         match std::fs::create_dir_all(&target_path) {
             Ok(_) => (),
             Err(e) => panic!("Critical error: {}", e)
