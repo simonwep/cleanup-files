@@ -1,6 +1,9 @@
+use std::collections::HashMap;
+
 /// A CLIFlag represents a flag passed as cli-argument.
 pub struct CLIFlag {
     pub name: String,
+    pub default: Option<fn(&HashMap<String, String>) -> String>,
     pub description: String,
     pub value_description: String,
     pub expects_value: bool,
@@ -16,6 +19,7 @@ impl CLIFlag {
     pub fn new(name: &str) -> Self {
         CLIFlag {
             name: name.to_owned(),
+            default: Option::None,
             description: String::default(),
             value_description: String::default(),
             expects_value: false,
@@ -33,6 +37,13 @@ impl CLIFlag {
     /// Makes the flag expecting a value passed to it.
     pub fn expects_value(mut self, value: bool) -> Self {
         self.expects_value = value;
+        self
+    }
+
+    /// Sets a default value
+    pub fn default(mut self, default: fn(&HashMap<String, String>) -> String) -> Self {
+        self.default = Option::Some(default);
+        self.expects_value = true;
         self
     }
 
