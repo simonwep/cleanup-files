@@ -69,8 +69,12 @@ pub fn start(app: CLIResult) {
 
     // Append to log-file if enabled
     // Ignore it if a dry-run is being performed
-    if app.has_flag("log") && !app.has_flag("dry") {
-        let log_file_path = target.join("cleanup.log");
+    if app.has_arg("log") && !app.has_flag("dry") {
+        let log_file_path = target.join(
+            app.get_arg("log")
+                .or(Option::Some(&String::from("cleanup.log")))
+                .unwrap()
+        );
 
         if !log_file_path.exists() {
             std::fs::write(&log_file_path, "")
@@ -88,7 +92,7 @@ pub fn start(app: CLIResult) {
                 .write(
                     (match res {
                         FileResult::Errored(error) => format!("[ERRORED] ({}) {:?}", error, path),
-                        FileResult::Moved => format!("[MOBED] {:?}", path),
+                        FileResult::Moved => format!("[MOVED] {:?}", path),
                         FileResult::Skipped => format!("[Skipped] {:?}", path),
                         FileResult::Checked => format!("[Checked] {:?}", path)
                     })

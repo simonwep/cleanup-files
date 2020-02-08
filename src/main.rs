@@ -15,6 +15,8 @@ fn main() {
         .add_flag(
             CLIFlag::new("log")
                 .description("Creates / updates a log-file in the target folder.")
+                .default(|_| String::from("cleanup.log"))
+                .value_description("file")
                 .abbr("-l")
                 .abbr("--log-file")
         )

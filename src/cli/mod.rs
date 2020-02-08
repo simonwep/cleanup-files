@@ -107,7 +107,10 @@ impl CLIApp {
 
                 // Parse value of flag if expected
                 if target_flag.expects_value {
-                    match iter.next() {
+                    match iter
+                        .next()
+                        .or(target_flag.default.and_then(|def| Option::Some(def(&args))))
+                    {
                         None => return Err(format!("Flag {} expects a value.", arg)),
                         Some(val) => {
                             // Save argument
@@ -139,8 +142,8 @@ impl CLIApp {
 
         // Check if values are missing
         for val in &self.values {
-            // Validate defined values
             if values.contains_key(&val.name) {
+                // Validate value
                 match val.validator {
                     None => (),
                     Some(validator) => match validator(&val.name) {
@@ -161,7 +164,7 @@ impl CLIApp {
                 }
             }
 
-            // Check if required
+            // Check if required but not set
             if val.required {
                 return Err(format!("Missing value labeled \"{}\"", val.name));
             }
