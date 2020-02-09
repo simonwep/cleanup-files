@@ -1,12 +1,12 @@
 #![allow(dead_code)]
 
-use crate::cli::CLIApp;
 use crate::cli::flag::CLIFlag;
 use crate::cli::value::CLIValue;
+use crate::cli::CLIApp;
 
-mod lib;
 mod cli;
 mod file;
+mod lib;
 mod run;
 
 fn main() {
@@ -50,7 +50,6 @@ fn main() {
         .add_value(
             CLIValue::new("source")
                 .default(|_| ".".to_string())
-                .required(false)
                 .description("Source directory")
         )
         .add_value(
@@ -60,7 +59,6 @@ fn main() {
                     source.push_str("/misc");
                     source
                 })
-                .required(false)
                 .description("Target directory")
         );
 

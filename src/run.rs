@@ -29,7 +29,7 @@ pub fn start(app: CLIResult) {
             .unwrap()
             .split(",")
             .map(|s| s.to_string())
-            .collect(),
+            .collect()
     };
 
     // Parse arguments and read directory entries
@@ -96,7 +96,7 @@ pub fn start(app: CLIResult) {
                         FileResult::Skipped => format!("[Skipped] {}", path),
                         FileResult::Checked => format!("[Checked] {}", path)
                     })
-                        .as_bytes()
+                    .as_bytes()
                 )
                 .and(log_file.write("\n".as_bytes()))
                 .ok()

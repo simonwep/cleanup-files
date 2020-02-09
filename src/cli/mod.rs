@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::lib::Wrapping;
 use flag::CLIFlag;
 use result::CLIResult;
 use value::CLIValue;
@@ -99,7 +100,7 @@ impl CLIApp {
                 // Check if this is known flag
                 let target_flag = match self.flags.iter().find(|flag| flag.has_abbr(&arg)) {
                     None => return Err(format!("Unknown flag: {}", arg)),
-                    Some(t) => t
+                    Some(flag) => flag
                 };
 
                 // Copy name of flag
@@ -107,6 +108,7 @@ impl CLIApp {
 
                 // Parse value of flag if expected
                 if target_flag.expects_value {
+                    // TODO: Refactor
                     match iter
                         .peek()
                         .and_then(|s| {
@@ -208,24 +210,56 @@ impl CLIApp {
         println!("{}", self.usage_description());
 
         // Prepare flags for printing and aligning them
-        let mut longest_flag: usize = 0;
+        let mut longest_left_side: usize = 0;
+        let mut values_map: Vec<(String, String)> = Vec::new();
         let mut flag_map: Vec<(String, String)> = Vec::new();
+        let mut arg_map: Vec<(String, String)> = Vec::new();
+
         for flag in &self.flags {
             let (usage, desc) = flag.to_string();
 
             // Update the maximum length of the command-syntax
             // This will be used to properly pad and align the commands later
             let len = usage.len();
-            if len > longest_flag {
-                longest_flag = len;
+
+            if len > longest_left_side {
+                longest_left_side = len;
             }
 
-            flag_map.push((desc, usage));
+            if flag.expects_value {
+                arg_map.push((desc, usage));
+            } else {
+                flag_map.push((desc, usage));
+            }
+        }
+
+        for val in &self.values {
+            let (name, desc) = val.to_string();
+            let len = name.len();
+
+            if len > longest_left_side {
+                longest_left_side = len;
+            }
+
+            values_map.push((desc, name.wrap_into("<", ">")));
         }
 
         // Print flags
-        for (name, flags) in flag_map {
-            println!("  {: <width$}  {}", flags, name, width = longest_flag);
+        let sections = [
+            ("Flags:", &flag_map),
+            ("Arguments:", &arg_map),
+            ("Values:", &values_map)
+        ];
+
+        for (section_name, content) in sections.iter() {
+            if content.len() == 0 {
+                continue;
+            }
+
+            println!("\n{}", section_name);
+            for (name, flags) in content.iter() {
+                println!("  {: <width$}  {}", flags, name, width = longest_left_side);
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ impl CLIValue {
         CLIValue {
             name: name.to_owned(),
             default: Option::None,
-            required: true,
+            required: false,
             description: String::from("Unknown"),
             validator: Option::None
         }
@@ -43,5 +43,15 @@ impl CLIValue {
     pub fn description(mut self, description: &str) -> Self {
         self.description = description.to_string();
         self
+    }
+
+    /// Returns the description and name as tuple
+    /// The name name will get a "?" as postfix if this value is marked as optional
+    /// e.g. not required.
+    pub fn to_string(&self) -> (String, String) {
+        (
+            self.name.clone() + if self.required { "" } else { "?" },
+            self.description.clone()
+        )
     }
 }
