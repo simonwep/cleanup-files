@@ -1,13 +1,13 @@
 #![allow(dead_code)]
+
+use crate::cli::CLIApp;
 use crate::cli::flag::CLIFlag;
 use crate::cli::value::CLIValue;
-use crate::cli::CLIApp;
 
+mod lib;
 mod cli;
 mod file;
-mod helper;
 mod run;
-mod utils;
 
 fn main() {
     let cli_app = CLIApp::new()
