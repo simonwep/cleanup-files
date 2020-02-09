@@ -47,6 +47,10 @@ impl CLIFlag {
         self
     }
 
+    pub fn resolve_default(&self, map: &HashMap<String, String>) -> Option<String> {
+        self.default.and_then(|func| Option::Some(func(map)))
+    }
+
     /// Updates the description of the value
     pub fn value_description(mut self, description: &str) -> Self {
         // Description can only be set on flags with value

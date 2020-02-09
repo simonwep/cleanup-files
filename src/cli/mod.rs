@@ -108,12 +108,18 @@ impl CLIApp {
                 // Parse value of flag if expected
                 if target_flag.expects_value {
                     match iter
-                        .next()
-                        .or(target_flag.default.and_then(|def| Option::Some(def(&args))))
+                        .peek()
+                        .and_then(|s| {
+                            if s.starts_with("-") {
+                                Option::None
+                            } else {
+                                Option::Some(s.clone())
+                            }
+                        })
+                        .or(target_flag.resolve_default(&args))
                     {
                         None => return Err(format!("Flag {} expects a value.", arg)),
                         Some(val) => {
-                            // Save argument
                             args.insert(flag_name, val);
                             continue;
                         }
