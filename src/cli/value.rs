@@ -48,7 +48,7 @@ impl CLIValue {
     /// Returns the description and name as tuple
     /// The name name will get a "?" as postfix if this value is marked as optional
     /// e.g. not required.
-    pub fn strigify(&self) -> (String, String) {
+    pub fn stringify(&self) -> (String, String) {
         (
             self.name.clone() + if self.required { "" } else { "?" },
             self.description.clone()

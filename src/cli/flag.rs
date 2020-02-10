@@ -101,7 +101,7 @@ mod test {
     use crate::cli::flag::*;
 
     #[test]
-    fn test_create() {
+    fn create() {
         let flag = CLIFlag::new("Hello")
             .description("Hello World")
             .abbr("-a")
@@ -114,7 +114,7 @@ mod test {
     }
 
     #[test]
-    fn test_create_with_value() {
+    fn create_with_value() {
         let flag = CLIFlag::new("Hello")
             .expects_value(true)
             .value_description("My Value");
@@ -124,12 +124,12 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_with_invalid_value_description_call() {
+    fn invalid_value_description_call() {
         CLIFlag::new("Hello").value_description("My Value");
     }
 
     #[test]
-    fn test_to_string() {
+    fn to_string() {
         let (usage, desc) = CLIFlag::new("Hello")
             .expects_value(true)
             .value_description("hello")
@@ -143,7 +143,7 @@ mod test {
     }
 
     #[test]
-    fn test_has_abbr() {
+    fn has_abbr() {
         let flag = CLIFlag::new("Hello")
             .abbr("-a")
             .abbr("--abbr")

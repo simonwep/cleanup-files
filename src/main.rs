@@ -11,7 +11,7 @@ mod run;
 
 fn main() {
     let cli_app = CLIApp::new()
-        .set_name("cleanup")
+        .name("cleanup")
         .add_flag(
             CLIFlag::new("log")
                 .description("Creates / updates a log-file in the target folder.")

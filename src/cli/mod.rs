@@ -11,9 +11,9 @@ pub mod result;
 pub mod value;
 
 pub struct CLIApp {
-    pub name: String,
-    pub flags: Vec<CLIFlag>,
-    pub values: Vec<CLIValue>
+    name: String,
+    flags: Vec<CLIFlag>,
+    values: Vec<CLIValue>
 }
 
 impl CLIApp {
@@ -27,7 +27,7 @@ impl CLIApp {
     }
 
     /// Sets a name for this app
-    pub fn set_name(mut self, name: &str) -> Self {
+    pub fn name(mut self, name: &str) -> Self {
         self.name = name.to_string();
         self
     }
@@ -109,6 +109,8 @@ impl CLIApp {
 
                 // Parse value of flag if expected
                 if target_flag.expects_value {
+                    let mut had_value = false;
+
                     // TODO: Refactor
                     match iter
                         .peek()
@@ -116,6 +118,7 @@ impl CLIApp {
                             if s.starts_with("-") {
                                 Option::None
                             } else {
+                                had_value = true;
                                 Option::Some(s.clone())
                             }
                         })
@@ -124,6 +127,11 @@ impl CLIApp {
                         None => return Err(format!("Flag {} expects a value.", arg)),
                         Some(val) => {
                             args.insert(flag_name, val);
+
+                            if had_value {
+                                iter.next();
+                            }
+
                             continue;
                         }
                     };
@@ -188,7 +196,7 @@ impl CLIApp {
 
         // Push expected values to it
         for val in &self.values {
-            desc.push_str(&format!(" <{}>", val.strigify().0));
+            desc.push_str(&format!(" <{}>", val.stringify().0));
         }
 
         // If flag were set indicate them with that little thingy
@@ -231,7 +239,7 @@ impl CLIApp {
         }
 
         for val in &self.values {
-            let (name, desc) = val.strigify();
+            let (name, desc) = val.stringify();
             let len = name.len();
 
             if len > longest_left_side {
