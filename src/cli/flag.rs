@@ -98,7 +98,7 @@ impl CLIFlag {
 
 #[cfg(test)]
 mod test {
-    use crate::cli::flag::CLIFlag;
+    use crate::cli::flag::*;
 
     #[test]
     fn test_create() {
