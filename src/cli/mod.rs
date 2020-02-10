@@ -268,3 +268,105 @@ impl CLIApp {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::cli::flag::CLIFlag;
+    use crate::cli::value::CLIValue;
+    use crate::cli::*;
+
+    macro_rules! create_args {
+        ($($element: expr), *) => {
+            {
+                let mut v = Vec::new();
+                $( v.push(String::from($element)); )*
+                v.into_iter()
+            }
+        };
+    }
+
+    #[test]
+    fn flags() {
+        let app = CLIApp::new()
+            .name("hello-world")
+            .add_flag(CLIFlag::new("help").abbr("-h").abbr("--help"))
+            .add_flag(CLIFlag::new("version").abbr("-v").abbr("--version"))
+            .add_flag(
+                CLIFlag::new("util")
+                    .default(|_| String::from("hello"))
+                    .abbr("-u")
+                    .abbr("--util")
+            );
+
+        let p1 = app
+            .consume(create_args!["", "-h", "-u", "--version"])
+            .unwrap();
+        assert!(p1.has_flag("help"));
+        assert!(p1.has_flag("version"));
+        assert_eq!(p1.get_arg("util").unwrap(), "hello");
+
+        let p2 = app
+            .consume(create_args!("", "--util", "baz", "-h"))
+            .unwrap();
+        assert!(p2.has_flag("help"));
+        assert!(!p2.has_flag("version"));
+        assert_eq!(p2.get_arg("util").unwrap(), "baz");
+    }
+
+    #[test]
+    fn fail_on_unknown_flags() {
+        let app = CLIApp::new()
+            .name("hello-world")
+            .add_flag(CLIFlag::new("help").abbr("-h"));
+
+        assert!(app.consume(create_args!("", "-s")).is_err());
+        assert!(app.consume(create_args!("", "-h")).is_ok());
+    }
+
+    #[test]
+    fn values() {
+        let app = CLIApp::new()
+            .name("hello-world")
+            .add_value(
+                CLIValue::new("source")
+                    .default(|_| String::from("."))
+                    .validate(|s| {
+                        if s.len() < 10 {
+                            Result::Ok(())
+                        } else {
+                            Result::Err(String::default())
+                        }
+                    })
+            )
+            .add_value(CLIValue::new("target").default(|v| {
+                let mut clone = v.get("source").unwrap().clone();
+                clone.push_str("--");
+                clone
+            }));
+
+        let p1 = app.consume(create_args!("")).unwrap();
+        assert_eq!(p1.get_value("source").unwrap(), ".");
+        assert_eq!(p1.get_value("target").unwrap(), ".--");
+
+        let p2 = app.consume(create_args!("", "hello")).unwrap();
+        assert_eq!(p2.get_value("source").unwrap(), "hello");
+        assert_eq!(p2.get_value("target").unwrap(), "hello--");
+
+        let p3 = app.consume(create_args!("", "hello", "world")).unwrap();
+        assert_eq!(p3.get_value("source").unwrap(), "hello");
+        assert_eq!(p3.get_value("target").unwrap(), "world");
+    }
+
+    #[test]
+    fn fail_on_too_many_values() {
+        let app = CLIApp::new()
+            .name("hello-world")
+            .add_value(CLIValue::new("source"))
+            .add_value(CLIValue::new("target"));
+
+        assert!(app.consume(create_args!("", "hello", "world")).is_ok());
+        assert!(app
+            .consume(create_args!("", "hello", "world", "bam"))
+            .is_err());
+    }
+}

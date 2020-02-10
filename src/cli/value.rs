@@ -24,6 +24,7 @@ impl CLIValue {
     /// Sets a default value
     pub fn default(mut self, default: fn(&HashMap<String, String>) -> String) -> Self {
         self.default = Option::Some(default);
+        self.required = true;
         self
     }
 
