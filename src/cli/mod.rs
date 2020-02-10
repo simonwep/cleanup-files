@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
-use crate::lib::Wrapping;
 use flag::CLIFlag;
 use result::CLIResult;
 use value::CLIValue;
+
+use crate::lib::Wrapping;
 
 pub mod flag;
 pub mod result;
@@ -187,11 +188,7 @@ impl CLIApp {
 
         // Push expected values to it
         for val in &self.values {
-            if val.required {
-                desc.push_str(&format!(" <{}?>", val.name.as_str()))
-            } else {
-                desc.push_str(&format!(" <{}>", val.name.as_str()))
-            }
+            desc.push_str(&format!(" <{}>", val.strigify().0));
         }
 
         // If flag were set indicate them with that little thingy
@@ -216,7 +213,7 @@ impl CLIApp {
         let mut arg_map: Vec<(String, String)> = Vec::new();
 
         for flag in &self.flags {
-            let (usage, desc) = flag.to_string();
+            let (usage, desc) = flag.stringify();
 
             // Update the maximum length of the command-syntax
             // This will be used to properly pad and align the commands later
@@ -234,7 +231,7 @@ impl CLIApp {
         }
 
         for val in &self.values {
-            let (name, desc) = val.to_string();
+            let (name, desc) = val.strigify();
             let len = name.len();
 
             if len > longest_left_side {

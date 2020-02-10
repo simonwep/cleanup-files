@@ -79,7 +79,7 @@ impl CLIFlag {
 
     /// Converts this flag to a readable string of how to use it.
     /// Returns a tuple with a usage-string and a clone of the description.
-    pub fn to_string(&self) -> (String, String) {
+    pub fn stringify(&self) -> (String, String) {
         let mut usage: String = self.abbr.join(", ");
 
         // Add description of expected value if provided
@@ -136,7 +136,7 @@ mod test {
             .description("Hello World")
             .abbr("-a")
             .abbr("--abbr")
-            .to_string();
+            .stringify();
 
         assert_eq!(desc, "Hello World");
         assert_eq!(usage, "-a, --abbr <hello>")

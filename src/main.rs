@@ -43,14 +43,14 @@ fn main() {
         )
         .add_flag(
             CLIFlag::new("version")
-                .description("Prints version.")
+                .description("Prints the current version.")
                 .abbr("-v")
                 .abbr("--version")
         )
         .add_value(
             CLIValue::new("source")
                 .default(|_| ".".to_string())
-                .description("Source directory")
+                .description("Source directory (Default is the current one).")
         )
         .add_value(
             CLIValue::new("target")
@@ -59,7 +59,7 @@ fn main() {
                     source.push_str("/misc");
                     source
                 })
-                .description("Target directory")
+                .description("Target directory (Default is source + ./misc).")
         );
 
     // Parse arguments
