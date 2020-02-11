@@ -22,7 +22,7 @@ pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileR
             return FileResult::Errored(format!(
                 "Failed to resolve extension of \"{}\"",
                 path.to_str().unwrap()
-            ))
+            ));
         }
     };
 
@@ -39,7 +39,7 @@ pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileR
         return FileResult::Checked;
     }
 
-    let destination_directory = PathBuf::from(destination).join(extension);
+    let destination_directory = destination.join(extension);
     if !destination_directory.exists() {
         match std::fs::create_dir(&destination_directory) {
             Ok(_) => (),
