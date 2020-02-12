@@ -10,6 +10,12 @@ edition = "2018"
 path-absolutize = "1.1.7"
 colored = "1.9"
 
+[dev-dependencies]
+remove_dir_all = "0.5.2"
+assert_cmd = "0.12.0"
+predicates = "1.0.2"
+rand = "0.7.3"
+
 [[bin]]
 name = "cleanup"
 path = "src/main.rs"
