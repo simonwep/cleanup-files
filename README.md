@@ -9,20 +9,31 @@
 
 ### Usage
 > Disclaimer:  
-> This project was intended to checkout rust and learn how it works. The code is kept simple and I've re-invented a lot to get a feel
-> for it. I'm aware of libraries to manage CLI Commands and design-patterns such as the builder-pattern were intentionally implemented
-> that way. The're probabaly ways to solve the problems I've faced, way better as I chose.
+> This project was intended to check out rust and learn its concepts and principles. The code is kept simple and I've re-invented a lot 
+> to learn how it works (I'm aware of libraries such as [`clap`](https://github.com/clap-rs/clap) and [`structop`](https://github.com/TeXitoi/structopt) to build CLIs)
 
 You can find the latest release [here](releases), keep in mind that some commands may not exist
 in older versions.
 
+```bash
+$ ./cleanup -h
+```
+
 ```
 Usage: cleanup <source> <target> [options...]
-  -l, --log-file <file>      Creates / updates a log-file in the target folder.
+
+Flags:
   -d, --dry, --dry-run       Performs a dry-run, e.g. nothing get's moved.
-  -e, --ext <extensions...>  Exclude certain files by their extension.
   -h, --help                 Prints this help text.
-  -v, --version              Prints version.
+  -v, --version              Prints the current version.
+
+Arguments:
+  -l, --log-file <file>      Creates / updates a log-file in the target folder.
+  -e, --ext <extensions...>  Exclude certain files by their extension.
+
+Values:
+  <source>                   Source directory (Default is the current one).
+  <target>                   Target directory (Default is source + ./misc).
 ```
 > Use `./clearup.exe -h` or `./clearup.exe --help` to see the content above.
 
@@ -32,9 +43,7 @@ This project is written in [rust](https://www.rust-lang.org), clone it via git:
 $ git clone https://github.com/Simonwep/cleanup-files
 ```
 
-Afterwards you can either run `cargo build` or use [`./release.sh`](release.sh).
+Afterwards you can either run `cargo build` or use [`./release.sh`](release.sh) to build a production-ready version of it.
 
-[`release.sh`](release.sh) will automatically create a `checksums.txt` file in `/target/release` with several checksums for the executable. If you're on a
+> [`release.sh`](release.sh) will automatically create a `checksums.txt` file in `/target/release` with several checksums for the executable. If you're on a
 windows-machine the script will additionally download [rcedit](https://github.com/electron/rcedit) to set the [icon](icon.ico) of the `.exe` file.
-
-There are no tests written for the tool _itself_ but for tools (like the [cli-parser](src/cli)) which can be run by `cargo test`.
