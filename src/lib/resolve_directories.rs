@@ -1,6 +1,8 @@
-use crate::cli::result::CLIResult;
-use path_absolutize::Absolutize;
 use std::path::PathBuf;
+
+use path_absolutize::Absolutize;
+
+use crate::cli::result::CLIResult;
 
 /**
 * Resolves source and target directory.
@@ -13,6 +15,11 @@ pub fn resolve_directories(app: &CLIResult) -> (PathBuf, PathBuf) {
     let target_path = PathBuf::from(app.get_value("target").unwrap().clone())
         .absolutize()
         .unwrap();
+
+    // Check if source-dir exists
+    if !source_path.exists() {
+        panic!(format!("Source not found: {:?}", source_path));
+    }
 
     // Create missing directories
     if !app.has_flag("dry") {
