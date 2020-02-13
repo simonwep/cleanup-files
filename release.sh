@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 
-# Build project
+# Test and build project
+cargo test
 cargo build --release --bin cleanup
 wait
 
 # Add executable icon on windows platforms
 if [[ "$(expr substr "$(uname)" 1 5)" == "MINGW" ]]; then
-  rcedit_path="./target/rcedit.exe"
+  rcedit_path="$(mktemp -d)/rcedit.exe"
   echo "Detected windows platform."
 
   # Download rcedit if not already done so
-  if [[ ! -f "$($rcedit_path)" ]]; then
-    echo "Downloading rcedit..."
-    curl -L -s -o "$($rcedit_path)" "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
+  if [[ ! -f "$rcedit_path" ]]; then
+    echo "Downloading rcedit to $rcedit_path"
+    curl -L -s -o "$rcedit_path" "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
+    wait
   else
     echo "Found rcedit!"
   fi
