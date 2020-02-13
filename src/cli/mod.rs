@@ -80,6 +80,11 @@ impl CLIApp {
         self
     }
 
+    /// Parses the cli-arguments
+    pub fn consume_args(&self) -> Result<CLIResult, String> {
+        self.consume(std::env::args())
+    }
+
     /// Parses a list of arguments
     pub fn consume<T: Iterator<Item = String>>(&self, raw_args: T) -> Result<CLIResult, String> {
         let mut args: HashMap<String, String> = HashMap::new();

@@ -63,7 +63,7 @@ fn main() {
         );
 
     // Parse arguments
-    let app = match cli_app.consume(std::env::args()) {
+    let app = match cli_app.consume_args() {
         Err(e) => {
             println!("{}\n", e.as_str());
             cli_app.print_help();
