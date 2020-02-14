@@ -69,7 +69,7 @@ fn main() {
             cli_app.print_help();
             return;
         }
-        Ok(v) => v
+        Ok(v) => v,
     };
 
     // Check if version or help is requested

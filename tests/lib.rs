@@ -54,9 +54,9 @@ pub fn test_command(test: fn(&mut Command, &dyn Fn(Vec<&str>, bool))) {
                         string
                     })
                     .collect(),
-                expected
+                expected,
             )
-        }
+        },
     );
 
     // Clean up

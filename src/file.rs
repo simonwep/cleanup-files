@@ -2,14 +2,14 @@ use std::path::PathBuf;
 
 pub struct Options {
     pub excluded: Vec<String>,
-    pub dry_run: bool
+    pub dry_run: bool,
 }
 
 pub enum FileResult {
     Moved,
     Skipped,
     Checked,
-    Errored(String)
+    Errored(String),
 }
 
 /**
@@ -57,6 +57,6 @@ pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileR
 
     match std::fs::rename(&path, &target) {
         Ok(_) => FileResult::Moved,
-        Err(_) => FileResult::Errored(String::from("Failed to move file."))
+        Err(_) => FileResult::Errored(String::from("Failed to move file.")),
     }
 }

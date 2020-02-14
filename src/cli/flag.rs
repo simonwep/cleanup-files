@@ -8,7 +8,7 @@ pub struct CLIFlag {
     pub value_description: String,
     pub expects_value: bool,
     pub validator: fn(&String) -> Result<(), String>,
-    pub abbr: Vec<String>
+    pub abbr: Vec<String>,
 }
 
 /// Represents a cli-flag.
@@ -24,7 +24,7 @@ impl CLIFlag {
             value_description: String::default(),
             expects_value: false,
             abbr: Vec::new(),
-            validator: |_| Ok(())
+            validator: |_| Ok(()),
         }
     }
 

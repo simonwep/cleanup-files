@@ -18,7 +18,7 @@ fn simple_sort() {
                 ".archive/cleanup.log",
                 ".ignored-file",
             ],
-            true
+            true,
         );
     });
 }
@@ -38,7 +38,7 @@ fn custom_target() {
                 "sorted/psd/f2.psd",
                 ".ignored-file",
             ],
-            true
+            true,
         );
     });
 }
@@ -58,7 +58,7 @@ fn exclude_extensions() {
                 "m2.mp4",
                 ".ignored-file",
             ],
-            true
+            true,
         );
     });
 }
@@ -83,7 +83,7 @@ fn dry_run() {
                 "m2.mp4",
                 ".ignored-file",
             ],
-            true
+            true,
         );
     });
 }
@@ -111,7 +111,7 @@ fn version_help() {
                 "m2.mp4",
                 ".ignored-file",
             ],
-            true
+            true,
         );
     });
 }

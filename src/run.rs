@@ -29,7 +29,7 @@ pub fn start(app: CLIResult) {
             .unwrap()
             .split(",")
             .map(|s| s.to_string())
-            .collect()
+            .collect(),
     };
 
     // Parse arguments and read directory entries
@@ -58,7 +58,7 @@ pub fn start(app: CLIResult) {
                     FileResult::Errored(error) => println!("{} {}", "✖ Errored:".red(), error),
                     FileResult::Moved => println!("{} {}", "♻ Moved:".green(), raw_path),
                     FileResult::Skipped => println!("{} {}", "⊙ Skipped:".yellow(), raw_path),
-                    FileResult::Checked => println!("{} {}", "✔ Matched:".cyan(), raw_path)
+                    FileResult::Checked => println!("{} {}", "✔ Matched:".cyan(), raw_path),
                 };
 
                 // Push to logs
@@ -98,9 +98,9 @@ pub fn start(app: CLIResult) {
                         FileResult::Errored(error) => format!("[ERRORED] ({}) {}", error, path),
                         FileResult::Moved => format!("[MOVED] {}", path),
                         FileResult::Skipped => format!("[Skipped] {}", path),
-                        FileResult::Checked => format!("[Checked] {}", path)
+                        FileResult::Checked => format!("[Checked] {}", path),
                     })
-                    .as_bytes()
+                    .as_bytes(),
                 )
                 .and(log_file.write("\n".as_bytes()))
                 .ok()

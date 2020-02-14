@@ -13,7 +13,7 @@ pub mod value;
 pub struct CLIApp {
     name: String,
     flags: Vec<CLIFlag>,
-    values: Vec<CLIValue>
+    values: Vec<CLIValue>,
 }
 
 impl CLIApp {
@@ -22,7 +22,7 @@ impl CLIApp {
         CLIApp {
             name: String::new(),
             flags: Vec::new(),
-            values: Vec::new()
+            values: Vec::new(),
         }
     }
 
@@ -106,7 +106,7 @@ impl CLIApp {
                 // Check if this is known flag
                 let target_flag = match self.flags.iter().find(|flag| flag.has_abbr(&arg)) {
                     None => return Err(format!("Unknown flag: {}", arg)),
-                    Some(flag) => flag
+                    Some(flag) => flag,
                 };
 
                 // Copy name of flag
@@ -170,8 +170,8 @@ impl CLIApp {
                     None => (),
                     Some(validator) => match validator(&val.name) {
                         Err(e) => return Err(e),
-                        Ok(_) => ()
-                    }
+                        Ok(_) => (),
+                    },
                 }
 
                 continue;
@@ -208,7 +208,7 @@ impl CLIApp {
         match self.flags.len() {
             0 => (),
             1 => desc.push_str(" [options]"),
-            _ => desc.push_str(" [options...]")
+            _ => desc.push_str(" [options...]"),
         }
 
         desc
@@ -258,7 +258,7 @@ impl CLIApp {
         let sections = [
             ("Flags:", &flag_map),
             ("Arguments:", &arg_map),
-            ("Values:", &values_map)
+            ("Values:", &values_map),
         ];
 
         for (section_name, content) in sections.iter() {
@@ -300,7 +300,7 @@ mod test {
                 CLIFlag::new("util")
                     .default(|_| String::from("hello"))
                     .abbr("-u")
-                    .abbr("--util")
+                    .abbr("--util"),
             );
 
         let p1 = app
@@ -341,7 +341,7 @@ mod test {
                         } else {
                             Result::Err(String::default())
                         }
-                    })
+                    }),
             )
             .add_value(CLIValue::new("target").default(|v| {
                 let mut clone = v.get("source").unwrap().clone();

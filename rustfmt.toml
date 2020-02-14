@@ -1,4 +1,1 @@
-unstable_features = true
-trailing_comma = "never"
 use_try_shorthand = true
-brace_style = "PreferSameLine"

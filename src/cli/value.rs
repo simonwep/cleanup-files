@@ -6,7 +6,7 @@ pub struct CLIValue {
     pub default: Option<fn(&HashMap<String, String>) -> String>,
     pub required: bool,
     pub description: String,
-    pub validator: Option<fn(&String) -> Result<(), String>>
+    pub validator: Option<fn(&String) -> Result<(), String>>,
 }
 
 impl CLIValue {
@@ -17,7 +17,7 @@ impl CLIValue {
             default: Option::None,
             required: false,
             description: String::from("Unknown"),
-            validator: Option::None
+            validator: Option::None,
         }
     }
 
@@ -52,7 +52,7 @@ impl CLIValue {
     pub fn stringify(&self) -> (String, String) {
         (
             self.name.clone() + if self.required { "" } else { "?" },
-            self.description.clone()
+            self.description.clone(),
         )
     }
 }

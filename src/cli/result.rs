@@ -3,19 +3,19 @@ use std::collections::HashMap;
 pub struct CLIResult {
     values: HashMap<String, String>,
     args: HashMap<String, String>,
-    flags: Vec<String>
+    flags: Vec<String>,
 }
 
 impl CLIResult {
     pub fn from(
         values: HashMap<String, String>,
         args: HashMap<String, String>,
-        flags: Vec<String>
+        flags: Vec<String>,
     ) -> CLIResult {
         CLIResult {
             values,
             args,
-            flags
+            flags,
         }
     }
 

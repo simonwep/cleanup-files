@@ -25,7 +25,7 @@ pub fn resolve_directories(app: &CLIResult) -> (PathBuf, PathBuf) {
     if !app.has_flag("dry") {
         match std::fs::create_dir_all(&target_path) {
             Ok(_) => (),
-            Err(e) => panic!("Critical error: {}", e)
+            Err(e) => panic!("Critical error: {}", e),
         };
     }
 
