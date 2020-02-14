@@ -6,18 +6,18 @@ use rand::Rng;
 use remove_dir_all::*;
 
 /// Verifies a file-tree based on a list of entries
-pub fn verify_file_tree(paths: Vec<String>) {
+pub fn verify_file_tree(paths: Vec<String>, expected: bool) {
     for path_str in paths {
         let path = PathBuf::from(path_str);
 
-        if !path.exists() {
+        if path.exists() != expected {
             panic!(format!("Path not found: {:?}", path));
         };
     }
 }
 
 /// Tests a command and compares the file-structure with the result.
-pub fn test_command(test: fn(&mut Command) -> Vec<&str>) {
+pub fn test_command(test: fn(&mut Command, &dyn Fn(Vec<&str>, bool))) {
     let hash: String = (0..10)
         .map(|_| rand::thread_rng().gen_range(97 as u8, 122 as u8) as char)
         .collect();
@@ -42,16 +42,21 @@ pub fn test_command(test: fn(&mut Command) -> Vec<&str>) {
     }
 
     // Execute test commands
-    verify_file_tree(
-        test(&mut Command::cargo_bin("cleanup").unwrap().current_dir(&dir))
-            .iter_mut()
-            .map(|s| {
-                let mut string = String::default();
-                string.push_str(&dir);
-                string.push_str(s);
-                string
-            })
-            .collect()
+    test(
+        &mut Command::cargo_bin("cleanup").unwrap().current_dir(&dir),
+        &|mut vec, expected| {
+            verify_file_tree(
+                vec.iter_mut()
+                    .map(|s| {
+                        let mut string = String::default();
+                        string.push_str(&dir);
+                        string.push_str(s);
+                        string
+                    })
+                    .collect(),
+                expected
+            )
+        }
     );
 
     // Clean up
