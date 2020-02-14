@@ -35,7 +35,14 @@ Values:
   <source>                   Source directory (Default is the current one).
   <target>                   Target directory (Default is source + ./misc).
 ```
-> Use `./clearup.exe -h` or `./clearup.exe --help` to see the content above.
+
+### Examples
+| Command | Explanation |
+| ------- | ----------- |
+| `./cleanup` | This will create a new `./.archive` in the current director and move all files (except these which start with a dot and the executable itself) into `.archive/[extension]/[file].[extension]`. |
+| `./cleanup . etc` | It'll still use the current dir as source (`.`) but will move the files into `./etc` instead of `./.archive`.|
+| `./cleanup -l --ext mp3,iso` | A `cleanup.log` file will be created inside of `./.archive` with information about what has been moved. Files with the exension `mp3` and `iso` are ignored and won't get moved. |
+| `./cleanup ../ ./bam --log-file ../my-log.txt` | Grabs file from the parent-directory and moves them into `./bam` (the current directory). The log-file will be create in the _current_ directory and is this time `my-log.txt`. |
 
 ### Building
 This project is written in [rust](https://www.rust-lang.org), clone it via git: 
