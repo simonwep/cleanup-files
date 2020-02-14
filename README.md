@@ -6,6 +6,19 @@
     Quickly clean up chaos
 </h3>
 
+<p align="center">
+  <a href="https://travis-ci.org/Simonwep/cleanup-files"><img
+     alt="Build Status"
+     src="https://img.shields.io/travis/Simonwep/cleanup-files.svg?style=popout-square"></a>
+  <img
+     alt="Download count"
+     src="https://img.shields.io/github/downloads/Simonwep/cleanup-files/latest/total.svg?color=1C77D8&style=popout-square"/>
+  <img alt="Current version"
+       src="https://img.shields.io/github/tag/Simonwep/cleanup-files.svg?color=2D8ECE&label=version&style=flat-square">
+  <a href="https://github.com/sponsors/Simonwep"><img
+     alt="Support me"
+     src="https://img.shields.io/badge/github-support-3498DB.svg?style=popout-square"></a>
+</p>
 
 ### Usage
 > Disclaimer:  
