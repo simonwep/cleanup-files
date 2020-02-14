@@ -56,10 +56,10 @@ fn main() {
             CLIValue::new("target")
                 .default(|list| {
                     let mut source = list.get("source").unwrap().clone();
-                    source.push_str("/misc");
+                    source.push_str("/.archive");
                     source
                 })
-                .description("Target directory (Default is source + ./misc).")
+                .description("Target directory (Default is source + .archive).")
         );
 
     // Parse arguments
