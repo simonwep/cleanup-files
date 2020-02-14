@@ -14,14 +14,13 @@ if [[ "$(expr substr "$(uname)" 1 5)" == "MINGW" ]]; then
   if [[ ! -f "$rcedit_path" ]]; then
     echo "Downloading rcedit to $rcedit_path"
     curl -L -s -o "$rcedit_path" "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
-    wait
   else
     echo "Found rcedit!"
   fi
 
   # Add icon
   echo "Adding icon..."
-  $rcedit_path ./target/release/cleanup.exe --set-icon icon.ico
+  "$rcedit_path" ./target/release/cleanup.exe --set-icon icon.ico
 
   echo "Icon successfully added!"
 fi
