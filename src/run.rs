@@ -67,15 +67,19 @@ pub fn start(app: CLIResult) {
         };
     }
 
-    // Append to log-file if enabled
-    // Ignore it if a dry-run is being performed
-    if app.has_arg("log") && !app.has_flag("dry") {
-        let log_file_path = target.join(
-            app.get_arg("log")
-                .or(Option::Some(&String::from("cleanup.log")))
-                .unwrap()
-        );
+    // Don't create a log-file if a dry-run is being performed
+    if !app.has_flag("dry") {
+        let default_log_file = &String::from("cleanup.log");
+        let log_file = app
+            .get_arg("log")
+            .or(Option::Some(default_log_file))
+            .unwrap();
 
+        if log_file.eq("false") {
+            return;
+        }
+
+        let log_file_path = target.join(log_file);
         if !log_file_path.exists() {
             std::fs::write(&log_file_path, "")
                 .ok()

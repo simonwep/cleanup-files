@@ -14,6 +14,7 @@ fn simple_sort() {
             "misc/mp4/m2.mp4",
             "misc/psd/f1.psd",
             "misc/psd/f2.psd",
+            "misc/cleanup.log",
             ".ignored-file",
         ]
     });

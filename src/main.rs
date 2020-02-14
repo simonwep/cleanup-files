@@ -14,9 +14,9 @@ fn main() {
         .name("cleanup")
         .add_flag(
             CLIFlag::new("log")
-                .description("Creates / updates a log-file in the target folder.")
+                .description("Creates (or disables) a log-file in the target folder. Default is 'cleanup.log'.")
                 .default(|_| String::from("cleanup.log"))
-                .value_description("file")
+                .value_description("file|boolean")
                 .abbr("-l")
                 .abbr("--log-file")
         )
@@ -50,7 +50,7 @@ fn main() {
         .add_value(
             CLIValue::new("source")
                 .default(|_| ".".to_string())
-                .description("Source directory (Default is the current one).")
+                .description("Source directory. Default is the current directory.")
         )
         .add_value(
             CLIValue::new("target")
