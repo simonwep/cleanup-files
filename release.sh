@@ -7,7 +7,7 @@ wait
 
 # Add executable icon on windows platforms
 if [[ "$(expr substr "$(uname)" 1 5)" == "MINGW" ]]; then
-  rcedit_path="$(mktemp -d)/rcedit.exe"
+  rcedit_path="/tmp/rcedit-x64.exe"
   echo "Detected windows platform."
 
   # Download rcedit if not already done so
@@ -43,15 +43,13 @@ bytes="$(wc -c $path | awk '{print $1}')"
 readable_bytes="$(numfmt --to=si $bytes)"
 
 # Save checksums to file
-content="
-File:    $filename
+content="File:    $filename
 Size:    $readable_bytes ($bytes bytes)
 MD5:     $md5sum
 SHA-1:   $sha1
 SHA-256: $sha256
-SHA-512: $sha512
-"
+SHA-512: $sha512"
 
-echo "$content" >>"$destfile"
+echo "$content" >"$destfile"
 echo "$content"
 echo "Saved to $destfile"
