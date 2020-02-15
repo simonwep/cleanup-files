@@ -7,6 +7,14 @@ use crate::cli::result::CLIResult;
 use crate::file::{accept, FileResult, Options};
 use crate::lib::resolve_directories;
 
+fn resolve_cs_list(val: Option<&String>) -> Option<Vec<String>> {
+    if val.is_none() {
+        return Option::None;
+    }
+
+    Option::Some(val.unwrap().split(",").map(|s| s.to_string()).collect())
+}
+
 pub fn start(app: CLIResult) {
     // Resolve current executable to prevent sorting it
     let current_exe = std::env::current_exe()
@@ -23,13 +31,8 @@ pub fn start(app: CLIResult) {
 
     let options = Options {
         dry_run: app.has_flag("dry"),
-        excluded: app
-            .get_arg("excluded")
-            .or(Option::Some(&String::default()))
-            .unwrap()
-            .split(",")
-            .map(|s| s.to_string())
-            .collect(),
+        excluded: resolve_cs_list(app.get_arg("excluded")),
+        included: resolve_cs_list(app.get_arg("included")),
     };
 
     // Parse arguments and read directory entries

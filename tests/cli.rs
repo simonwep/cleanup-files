@@ -46,7 +46,11 @@ fn custom_target() {
 #[test]
 fn exclude_extensions() {
     lib::test_command(|cmd, test| {
-        cmd.arg(".").arg("--ext").arg("txt,mp4").assert().success();
+        cmd.arg(".")
+            .arg("--exclude")
+            .arg("txt,mp4")
+            .assert()
+            .success();
 
         test(
             vec![
@@ -64,10 +68,34 @@ fn exclude_extensions() {
 }
 
 #[test]
+fn include_extensions() {
+    lib::test_command(|cmd, test| {
+        cmd.arg(".")
+            .arg("--include")
+            .arg("txt,psd")
+            .assert()
+            .success();
+
+        test(
+            vec![
+                ".archive/psd/f1.psd",
+                ".archive/psd/f2.psd",
+                ".archive/txt/t1.txt",
+                ".archive/txt/t2.txt",
+                "m1.mp4",
+                "m2.mp4",
+                ".ignored-file",
+            ],
+            true,
+        );
+    });
+}
+
+#[test]
 fn dry_run() {
     lib::test_command(|cmd, test| {
         cmd.arg(".")
-            .arg("--ext")
+            .arg("--include")
             .arg("txt,mp4")
             .arg("-d")
             .assert()

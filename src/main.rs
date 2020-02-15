@@ -28,12 +28,20 @@ fn main() {
                 .abbr("--dry-run")
         )
         .add_flag(
+            CLIFlag::new("included")
+                .description("Move only files with one of the following extensions.")
+                .expects_value(true)
+                .value_description("extensions...")
+                .abbr("-i")
+                .abbr("--include")
+        )
+        .add_flag(
             CLIFlag::new("excluded")
                 .description("Exclude certain files by their extension.")
                 .expects_value(true)
                 .value_description("extensions...")
                 .abbr("-e")
-                .abbr("--ext")
+                .abbr("--exclude")
         )
         .add_flag(
             CLIFlag::new("help")

@@ -1,7 +1,8 @@
 use std::path::PathBuf;
 
 pub struct Options {
-    pub excluded: Vec<String>,
+    pub excluded: Option<Vec<String>>,
+    pub included: Option<Vec<String>>,
     pub dry_run: bool,
 }
 
@@ -10,6 +11,14 @@ pub enum FileResult {
     Skipped,
     Checked,
     Errored(String),
+}
+
+fn contains_extension(list: &Option<Vec<String>>, ext: &String) -> bool {
+    if list.is_none() {
+        return true;
+    }
+
+    list.as_ref().unwrap().contains(ext)
 }
 
 /**
@@ -26,12 +35,24 @@ pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileR
         }
     };
 
-    // User might want to exclude certain extension
-    if options
-        .excluded
-        .contains(&extension.to_str().unwrap().to_string())
-    {
-        return FileResult::Skipped;
+    // Filter
+    let extension_string = &extension.to_str().unwrap().to_string();
+    match &options.included {
+        None => (),
+        Some(list) => {
+            if !list.contains(extension_string) {
+                return FileResult::Skipped;
+            }
+        }
+    }
+
+    match &options.excluded {
+        None => (),
+        Some(list) => {
+            if list.contains(extension_string) {
+                return FileResult::Skipped;
+            }
+        }
     }
 
     // Check if dry-run should be performed
