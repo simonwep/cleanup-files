@@ -1,6 +1,7 @@
 use std::fs::OpenOptions;
 use std::io::Write;
 
+use chrono::Utc;
 use colored::Colorize;
 
 use crate::cli::result::CLIResult;
@@ -59,7 +60,7 @@ pub fn start(app: CLIResult) {
                 // Print message
                 match &res {
                     FileResult::Errored(error) => println!("{} {}", "✖ Errored:".red(), error),
-                    FileResult::Moved => println!("{} {}", "♻ Moved:".green(), raw_path),
+                    FileResult::Moved(_) => println!("{} {}", "♻ Moved:".green(), raw_path),
                     FileResult::Skipped => println!("{} {}", "⊙ Skipped:".yellow(), raw_path),
                     FileResult::Checked => println!("{} {}", "✔ Matched:".cyan(), raw_path),
                 };
@@ -95,16 +96,21 @@ pub fn start(app: CLIResult) {
             .unwrap();
 
         for (res, path) in log {
+            let mut content = Utc::now().format("%Y-%m-%d %H:%M:%S ").to_string();
+            content.push_str(
+                (match res {
+                    FileResult::Errored(error) => format!("[ERRORED] {} ({})", path, error),
+                    FileResult::Moved(dest) => {
+                        format!("[MOVED] {} -> {}", path, dest.to_str().unwrap())
+                    }
+                    FileResult::Skipped => format!("[SKIPPED] {}", path),
+                    FileResult::Checked => format!("[CHECKED] {}", path),
+                })
+                .as_str(),
+            );
+
             log_file
-                .write(
-                    (match res {
-                        FileResult::Errored(error) => format!("[ERRORED] ({}) {}", error, path),
-                        FileResult::Moved => format!("[MOVED] {}", path),
-                        FileResult::Skipped => format!("[Skipped] {}", path),
-                        FileResult::Checked => format!("[Checked] {}", path),
-                    })
-                    .as_bytes(),
-                )
+                .write(content.as_bytes())
                 .and(log_file.write("\n".as_bytes()))
                 .ok()
                 .expect(&format!("Failed to update log-file {:?}", log_file_path));

@@ -7,7 +7,7 @@ pub struct Options {
 }
 
 pub enum FileResult {
-    Moved,
+    Moved(PathBuf),
     Skipped,
     Checked,
     Errored(String),
@@ -77,7 +77,7 @@ pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileR
     let target = PathBuf::from(&destination_directory).join(path.file_name().unwrap());
 
     match std::fs::rename(&path, &target) {
-        Ok(_) => FileResult::Moved,
+        Ok(_) => FileResult::Moved(target),
         Err(_) => FileResult::Errored(String::from("Failed to move file.")),
     }
 }
