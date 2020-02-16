@@ -36,17 +36,19 @@ $ ./cleanup -h
 Usage: cleanup <source> <target> [options...]
 
 Flags:
-  -d, --dry, --dry-run       Performs a dry-run, e.g. nothing get's moved.
-  -h, --help                 Prints this help text.
-  -v, --version              Prints the current version.
+  -d, --dry, --dry-run           Performs a dry-run, e.g. nothing get's moved.
+  -h, --help                     Prints this help text.
+  -v, --version                  Prints the current version.
 
 Arguments:
-  -l, --log-file <file>      Creates / updates a log-file in the target folder.
-  -e, --ext <extensions...>  Exclude certain files by their extension.
+  -l, --log-file <file|boolean>  Creates (or disables) a log-file in the target folder. Default is 'c
+leanup.log'.
+  -i, --include <extensions...>  Move only files with one of the following extensions.
+  -e, --exclude <extensions...>  Exclude certain files by their extension.
 
 Values:
-  <source>                   Source directory (Default is the current one).
-  <target>                   Target directory (Default is source + ./misc).
+  <source>                       Source directory. Default is the current directory.
+  <target>                       Target directory (Default is source + .archive).
 ```
 
 ### Examples
