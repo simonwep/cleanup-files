@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://travis-ci.org/Simonwep/cleanup-files"><img
      alt="Build Status"
-     src="https://img.shields.io/travis/Simonwep/cleanup-files.svg?style=popout-square"></a>
+     src="https://img.shields.io/travis/Simonwep/cleanup-files/master.svg?style=popout-square"></a>
   <img
      alt="Download count"
      src="https://img.shields.io/github/downloads/Simonwep/cleanup-files/latest/total.svg?color=1C77D8&style=popout-square"/>
