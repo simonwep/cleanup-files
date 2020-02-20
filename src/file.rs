@@ -36,11 +36,15 @@ pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileR
     };
 
     // Filter
-    let extension_string = &extension.to_str().unwrap().to_string();
+    let extension_string = match &extension.to_str() {
+        None => return FileResult::Errored(String::from("Cannot encode extension.")),
+        Some(s) => s.to_string(),
+    };
+
     match &options.included {
         None => (),
         Some(list) => {
-            if !list.contains(extension_string) {
+            if !list.contains(&extension_string) {
                 return FileResult::Skipped;
             }
         }
@@ -49,7 +53,7 @@ pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileR
     match &options.excluded {
         None => (),
         Some(list) => {
-            if list.contains(extension_string) {
+            if list.contains(&extension_string) {
                 return FileResult::Skipped;
             }
         }
