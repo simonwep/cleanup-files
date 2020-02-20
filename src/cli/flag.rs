@@ -7,7 +7,7 @@ pub struct CLIFlag {
     pub description: String,
     pub value_description: String,
     pub expects_value: bool,
-    pub validator: fn(&String) -> Result<(), String>,
+    pub validator: Option<fn(&String) -> Result<(), String>>,
     pub abbr: Vec<String>,
 }
 
@@ -24,7 +24,7 @@ impl CLIFlag {
             value_description: String::default(),
             expects_value: false,
             abbr: Vec::new(),
-            validator: |_| Ok(()),
+            validator: Option::None,
         }
     }
 
@@ -67,7 +67,7 @@ impl CLIFlag {
 
     /// Sets a validator for this flag
     pub fn validate(mut self, validator: fn(&String) -> Result<(), String>) -> Self {
-        self.validator = validator;
+        self.validator = Option::Some(validator);
         self
     }
 

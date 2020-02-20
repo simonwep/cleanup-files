@@ -131,6 +131,15 @@ impl CLIApp {
                     {
                         None => return Err(format!("Flag {} expects a value.", arg)),
                         Some(val) => {
+                            // Validate
+                            match target_flag.validator {
+                                None => (),
+                                Some(v) => match v(&val) {
+                                    Ok(_) => (),
+                                    Err(e) => return Err(e),
+                                },
+                            };
+
                             args.insert(flag_name, val);
 
                             if had_value {
