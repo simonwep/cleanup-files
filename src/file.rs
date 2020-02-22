@@ -37,7 +37,7 @@ pub fn accept(path: &PathBuf, destination: &PathBuf, options: &Options) -> FileR
 
     // Filter
     let extension_string = match &extension.to_str() {
-        None => return FileResult::Errored(String::from("Cannot encode extension.")),
+        None => return FileResult::Errored(String::from("Cannot decode extension.")),
         Some(s) => s.to_string(),
     };
 
