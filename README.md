@@ -7,9 +7,9 @@
 </h3>
 
 <p align="center">
-  <a href="https://travis-ci.org/Simonwep/cleanup-files"><img
+  <a href="https://github.com/Simonwep/cleanup-files/actions?query=workflow%3ACI"><img
      alt="Build Status"
-     src="https://img.shields.io/travis/Simonwep/cleanup-files/master.svg?style=popout-square"></a>
+     src="https://github.com/Simonwep/cleanup-files/workflows/CI/badge.svg"></a>
   <img
      alt="Download count"
      src="https://img.shields.io/github/downloads/Simonwep/cleanup-files/latest/total.svg?color=1C77D8&style=popout-square"/>
@@ -21,12 +21,12 @@
 </p>
 
 ### Usage
+
 > Disclaimer:  
-> This project was intended to check out rust and learn its concepts and principles. The code is kept simple and I've re-invented a lot 
+> This project was intended to check out rust and learn its concepts and principles. The code is kept simple and I've re-invented a lot
 > to learn how it works (I'm aware of libraries such as [`clap`](https://github.com/clap-rs/clap) and [`structop`](https://github.com/TeXitoi/structopt) to build CLIs)
 
-You can find the latest release [here](releases), keep in mind that some commands may not exist
-in older versions.
+You can find the latest release [here](releases), keep in mind that some commands may not exist in older versions.
 
 ```bash
 $ ./cleanup -h
@@ -52,20 +52,23 @@ Values:
 ```
 
 ### Examples
+
 | Command | Explanation |
 | ------- | ----------- |
 | `./cleanup` | This will create a new `./.archive` in the current director and move all files (except these which start with a dot and the executable itself) into `.archive/[extension]/[file].[extension]`. |
 | `./cleanup . etc` | It'll still use the current dir as source (`.`) but will move the files into `./etc` instead of `./.archive`.|
 | `./cleanup -l --ext mp3,iso` | A `cleanup.log` file will be created inside of `./.archive` with information about what has been moved. Files with the exension `mp3` and `iso` are ignored and won't get moved. |
-| `./cleanup ../ ./bam --log-file ../my-log.txt` | Grabs file from the parent-directory and moves them into `./bam` (the current directory). The log-file will be create in the _current_ directory and is this time `my-log.txt`. |
+| `./cleanup ../ ./bam --log-file ../my-log.txt` | Grabs file from the parent-directory and moves them into `./bam` (the current directory). The log-file will be create in the _
+current_ directory and is this time `my-log.txt`. |
 
 ### Building
-This project is written in [rust](https://www.rust-lang.org), clone it via git: 
+
+This project is written in [rust](https://www.rust-lang.org), clone it via git:
+
 ```bash
 $ git clone https://github.com/Simonwep/cleanup-files
 ```
 
 Afterwards you can either run `cargo build` or use [`./release.sh`](release.sh) to build a production-ready version of it.
 
-> [`release.sh`](release.sh) will automatically create a `checksums.txt` file in `/target/release` with several checksums for the executable. If you're on a
-windows-machine the script will additionally download [rcedit](https://github.com/electron/rcedit) to set the [icon](icon.ico) of the `.exe` file.
+> [`release.sh`](release.sh) will automatically create a `checksums.txt` file in `/target/release` with several checksums for the executable. If you're on a windows-machine the script will additionally download [rcedit](https://github.com/electron/rcedit) to set the [icon](icon.ico) of the `.exe` file.
