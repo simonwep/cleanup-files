@@ -18,7 +18,7 @@ pub fn resolve_directories(app: &CLIResult) -> (PathBuf, PathBuf) {
 
     // Check if source-dir exists
     if !source_path.exists() {
-        panic!(format!("Source not found: {:?}", source_path));
+        panic!("Source not found: {:?}", source_path);
     }
 
     // Create missing directories

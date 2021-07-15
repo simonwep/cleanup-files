@@ -55,10 +55,10 @@ impl CLIFlag {
     pub fn value_description(mut self, description: &str) -> Self {
         // Description can only be set on flags with value
         if !self.expects_value {
-            panic!(format!(
+            panic!(
                 "Tried to set value-description on flag '{}' which does not expect a value.",
                 self.name
-            ))
+            )
         }
 
         self.value_description = description.to_string();

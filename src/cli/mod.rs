@@ -39,19 +39,16 @@ impl CLIApp {
         for flag in &self.flags {
             // Check name
             if flag.name.eq(&new_flag.name) {
-                panic!(format!(
-                    "Flag with name \"{}\" is already defined.",
-                    &new_flag.name
-                ))
+                panic!("Flag with name \"{}\" is already defined.", &new_flag.name)
             }
 
             // Check if abbreviation is already in use
             for abbr in &flag.abbr {
                 if new_flag.abbr.contains(abbr) {
-                    panic!(format!(
+                    panic!(
                         "Flag with name \"{}\" uses \"{}\" which is already in use by \"{}\".",
                         &new_flag.name, &abbr, &flag.name
-                    ))
+                    )
                 }
             }
         }
@@ -70,10 +67,7 @@ impl CLIApp {
             .position(|v| v.name.eq(&val.name))
             .is_some()
         {
-            panic!(format!(
-                "Value with name \"{}\" is already defined.",
-                &val.name
-            ))
+            panic!("Value with name \"{}\" is already defined.", &val.name)
         }
 
         self.values.push(val);
