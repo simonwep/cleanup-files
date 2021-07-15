@@ -69,6 +69,4 @@ This project is written in [rust](https://www.rust-lang.org), clone it via git:
 $ git clone https://github.com/Simonwep/cleanup-files
 ```
 
-Afterwards you can either run `cargo build` or use [`./release.sh`](release.sh) to build a production-ready version of it.
-
-> [`release.sh`](release.sh) will automatically create a `checksums.txt` file in `/target/release` with several checksums for the executable. If you're on a windows-machine the script will additionally download [rcedit](https://github.com/electron/rcedit) to set the [icon](icon.ico) of the `.exe` file.
+Afterwards you can either run `cargo build` or `cargo test` to test the project.
